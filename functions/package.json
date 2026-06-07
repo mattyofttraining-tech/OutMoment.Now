@@ -1,0 +1,25 @@
+{
+  "name": "ourmoment-functions",
+  "description": "Cloud Functions for OurMoment — events, codes, AI quests, checkout, and the 30-day hard delete.",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "deploy": "npm run build && firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.2",
+    "stripe": "^17.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "private": true
+}

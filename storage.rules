@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// OurMoment Storage security.
+//
+// Photos live under events/{eventId}/photos/{file}. Only members of that event
+// (checked against the event's memberUids in Firestore) can read or upload, and
+// uploads are limited to reasonably-sized images.
+//
+// NOTE: Firebase download URLs carry a long-lived token; if such a URL leaks it
+// bypasses these rules. For maximum confidentiality, serve photos via short-lived
+// signed URLs from a Cloud Function instead of getDownloadURL(). See docs/SECURITY.md.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isMemberOf(eventId) {
+      return signedIn()
+        && request.auth.uid in firestore.get(/databases/(default)/documents/events/$(eventId)).data.memberUids;
+    }
+
+    match /events/{eventId}/photos/{photoId} {
+      allow read: if isMemberOf(eventId);
+      allow write: if isMemberOf(eventId)
+        && request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Everything else is locked down.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

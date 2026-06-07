@@ -1,0 +1,73 @@
+rules_version = '2';
+
+// OurMoment Firestore security — closed groups, by design.
+//
+// Core guarantees:
+//  • You can only read an event (and everything inside it) if your uid is in
+//    that event's memberUids list.
+//  • Membership is granted ONLY by the joinEvent / createEvent Cloud Functions
+//    (which run with admin privileges and bypass these rules). Clients can
+//    never add themselves to an event or create/delete events directly.
+//  • Clients may make exactly two narrow writes: append themselves to a quest's
+//    completedBy, and bump an event's photoCount. Nothing else.
+//  • A user's saved photos are private to them.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function memberUids(eventId) {
+      return get(/databases/$(database)/documents/events/$(eventId)).data.memberUids;
+    }
+
+    function isMemberOf(eventId) {
+      return signedIn() && request.auth.uid in memberUids(eventId);
+    }
+
+    function onlyChanged(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    match /events/{eventId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.memberUids;
+
+      // Members may only nudge the photo counter; all other event fields are
+      // server-managed. Create/delete are Cloud-Function-only.
+      allow update: if isMemberOf(eventId) && onlyChanged(['photoCount']);
+      allow create, delete: if false;
+
+      match /members/{uid} {
+        allow read: if isMemberOf(eventId);
+        allow write: if false; // joinEvent / createEvent only
+      }
+
+      match /quests/{questId} {
+        allow read: if isMemberOf(eventId);
+        // Members may only mark a quest complete (append to completedBy).
+        allow update: if isMemberOf(eventId) && onlyChanged(['completedBy']);
+        allow create, delete: if false;
+      }
+
+      match /photos/{photoId} {
+        allow read: if isMemberOf(eventId);
+        // A member may add a photo, but only attributed to themselves.
+        allow create: if isMemberOf(eventId)
+          && request.resource.data.uploaderUid == request.auth.uid;
+        // Photos are immutable; deletion happens only via the scheduled purge.
+        allow update, delete: if false;
+      }
+    }
+
+    // Private per-user data: profile + the saved (kept-forever) album.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+
+      match /{document=**} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+    }
+  }
+}
