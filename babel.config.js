@@ -3,8 +3,9 @@ module.exports = function (api) {
   return {
     presets: [['babel-preset-expo', { jsxImportSource: 'react' }]],
     plugins: [
-      // react-native-reanimated/plugin must be listed last.
-      'react-native-reanimated/plugin',
+      // Reanimated 4 ships its Babel plugin via react-native-worklets.
+      // This must be listed last.
+      'react-native-worklets/plugin',
     ],
   };
 };

@@ -88,7 +88,7 @@ matter: join, quest complete, save.
 
 ## Key dependencies
 
-Expo SDK 53 · expo-router · react-native-reanimated · react-native-gesture-handler
+Expo SDK 54 · expo-router · react-native-reanimated 4 (+ react-native-worklets) · react-native-gesture-handler
 · firebase (modular v11) · zustand · expo-camera · expo-media-library · expo-image
 · @expo-google-fonts/inter · react-native-svg.
 Backend: firebase-admin · firebase-functions (v2) · @anthropic-ai/sdk · stripe.

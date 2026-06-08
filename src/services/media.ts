@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
+// SDK 54 introduced a new expo-file-system API; we use the stable legacy
+// download/cache helpers here.
+import * as FileSystem from 'expo-file-system/legacy';
 
 /**
  * Camera-roll export for saved moments. When a guest keeps a photo we also try

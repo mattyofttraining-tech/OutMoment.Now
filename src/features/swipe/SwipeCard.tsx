@@ -1,6 +1,5 @@
 import React from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import Animated, { type AnimatedStyle } from 'react-native-reanimated';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Photo } from '@/types';
@@ -9,16 +8,15 @@ import { Text } from '@/components/ui';
 import { relativeTime } from '@/utils/time';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
-const CARD_W = SCREEN_W - 32;
-const CARD_H = Math.min(SCREEN_H * 0.66, CARD_W * 1.45);
+export const CARD_W = SCREEN_W - 32;
+export const CARD_H = Math.min(SCREEN_H * 0.66, CARD_W * 1.45);
 
 export interface SwipeCardProps {
   photo: Photo;
-  keepOverlayStyle?: AnimatedStyle;
-  passOverlayStyle?: AnimatedStyle;
 }
 
-export function SwipeCard({ photo, keepOverlayStyle, passOverlayStyle }: SwipeCardProps) {
+/** The photo surface for the swipe deck. Decision stamps are overlaid by the deck. */
+export function SwipeCard({ photo }: SwipeCardProps) {
   const theme = useTheme();
 
   return (
@@ -46,24 +44,6 @@ export function SwipeCard({ photo, keepOverlayStyle, passOverlayStyle }: SwipeCa
           {relativeTime(photo.createdAt)}
         </Text>
       </View>
-
-      {/* KEEP stamp */}
-      {keepOverlayStyle ? (
-        <Animated.View style={[styles.stamp, styles.keepStamp, keepOverlayStyle]} pointerEvents="none">
-          <Text variant="title2" weight="700" color={theme.colors.keep}>
-            KEEP
-          </Text>
-        </Animated.View>
-      ) : null}
-
-      {/* SKIP stamp */}
-      {passOverlayStyle ? (
-        <Animated.View style={[styles.stamp, styles.passStamp, passOverlayStyle]} pointerEvents="none">
-          <Text variant="title2" weight="700" color={theme.colors.pass}>
-            LET GO
-          </Text>
-        </Animated.View>
-      ) : null}
     </View>
   );
 }
@@ -77,24 +57,4 @@ const styles = StyleSheet.create({
   },
   gradient: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 160 },
   meta: { position: 'absolute', left: 20, bottom: 20, right: 20 },
-  stamp: {
-    position: 'absolute',
-    top: 28,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    borderWidth: 3,
-  },
-  keepStamp: {
-    right: 24,
-    transform: [{ rotate: '12deg' }],
-    borderColor: '#34C759',
-    backgroundColor: 'rgba(52,199,89,0.12)',
-  },
-  passStamp: {
-    left: 24,
-    transform: [{ rotate: '-12deg' }],
-    borderColor: '#FF453A',
-    backgroundColor: 'rgba(255,69,58,0.12)',
-  },
 });

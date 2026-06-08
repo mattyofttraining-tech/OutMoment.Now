@@ -11,8 +11,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { Photo, SwipeDecision } from '@/types';
 import { motion } from '@/theme';
+import { Text } from '@/components/ui';
 import { haptics } from '@/utils/haptics';
-import { SwipeCard } from './SwipeCard';
+import { SwipeCard, CARD_W, CARD_H } from './SwipeCard';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const SWIPE_THRESHOLD = SCREEN_W * 0.28;
@@ -135,7 +136,21 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
 
       <GestureDetector gesture={pan}>
         <Animated.View style={[styles.cardWrap, topCardStyle]}>
-          <SwipeCard photo={current} keepOverlayStyle={keepOverlay} passOverlayStyle={passOverlay} />
+          <View style={styles.cardSized}>
+            <SwipeCard photo={current} />
+
+            {/* Decision stamps, driven by the same pan value. */}
+            <Animated.View style={[styles.stamp, styles.keepStamp, keepOverlay]} pointerEvents="none">
+              <Text variant="title2" weight="700" color="#34C759">
+                KEEP
+              </Text>
+            </Animated.View>
+            <Animated.View style={[styles.stamp, styles.passStamp, passOverlay]} pointerEvents="none">
+              <Text variant="title2" weight="700" color="#FF453A">
+                LET GO
+              </Text>
+            </Animated.View>
+          </View>
         </Animated.View>
       </GestureDetector>
     </View>
@@ -147,4 +162,25 @@ export { SWIPE_THRESHOLD };
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   cardWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' },
+  cardSized: { width: CARD_W, height: CARD_H },
+  stamp: {
+    position: 'absolute',
+    top: 28,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 3,
+  },
+  keepStamp: {
+    right: 24,
+    transform: [{ rotate: '12deg' }],
+    borderColor: '#34C759',
+    backgroundColor: 'rgba(52,199,89,0.12)',
+  },
+  passStamp: {
+    left: 24,
+    transform: [{ rotate: '-12deg' }],
+    borderColor: '#FF453A',
+    backgroundColor: 'rgba(255,69,58,0.12)',
+  },
 });
