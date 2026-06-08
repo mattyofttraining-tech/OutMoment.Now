@@ -83,7 +83,7 @@ export default function GalleryScreen() {
           onPressPhoto={(p) => setViewer(p)}
           ListHeaderComponent={header}
           ListEmptyComponent={
-            <EmptyState glyph="📸" title="No photos yet" subtitle="Be the first to capture something. Tap Capture on the Moment tab." />
+            <EmptyState glyph="📸" title="Be the first" subtitle="The gallery fills up as the day unfolds. Tap Capture and start the story." />
           }
         />
       </SafeAreaView>

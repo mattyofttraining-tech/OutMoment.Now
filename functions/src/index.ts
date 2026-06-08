@@ -7,6 +7,7 @@ import { defineSecret } from 'firebase-functions/params';
 import { logger } from 'firebase-functions';
 import { QUEST_PACKS, makeJoinCode, coverFor } from './questPacks';
 import { generateQuestsWithAI } from './quests';
+import { priceCents, type GuestTierId } from './pricing';
 
 initializeApp();
 const db = getFirestore();
@@ -24,6 +25,7 @@ interface CreateEventData {
   hostName: string;
   startsAt: number;
   aiBrief?: string;
+  guestTier?: GuestTierId;
 }
 
 const VALID_TYPES = ['marriage', 'confirmation', 'baptism', 'birthday', 'special'];
@@ -69,6 +71,7 @@ export const createEvent = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (reque
     photoCount: 0,
     memberUids: [uid],
     aiBrief: data.aiBrief?.trim() || null,
+    guestTier: data.guestTier || 'intimate',
   };
 
   // Build the quest pack: AI for a provided brief, else the curated pack.
@@ -174,28 +177,25 @@ export const generateQuests = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (re
 interface CheckoutData {
   eventType: string;
   title: string;
+  guestTier?: GuestTierId;
 }
 
-const PRICES: Record<string, number> = {
-  marriage: 14900,
-  confirmation: 8900,
-  baptism: 8900,
-  birthday: 6900,
-  special: 9900,
-};
-
 /**
- * Create a Stripe Checkout session for a booking. Booking is a real-world
- * service (generally IAP-exempt) — confirm against App Store guidelines.
+ * Create a Stripe Checkout session for a booking. Price scales with the chosen
+ * guest-capacity tier. Booking is a real-world service (generally IAP-exempt) —
+ * confirm against App Store guidelines.
  */
 export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, async (request) => {
   if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in first.');
-  const { eventType, title } = request.data as CheckoutData;
+  const { eventType, title, guestTier } = request.data as CheckoutData;
 
   const key = STRIPE_SECRET_KEY.value();
   if (!key) {
     throw new HttpsError('unimplemented', 'Stripe is not configured yet. Set STRIPE_SECRET_KEY.');
   }
+
+  const tier: GuestTierId = guestTier || 'intimate';
+  const amount = priceCents(eventType, tier);
 
   // Lazy-import so the function only pulls Stripe when actually configured.
   const Stripe = (await import('stripe')).default;
@@ -209,12 +209,12 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
         quantity: 1,
         price_data: {
           currency: 'usd',
-          unit_amount: PRICES[eventType] ?? PRICES.special,
-          product_data: { name: `OurMoment — ${title || 'Event'}` },
+          unit_amount: amount,
+          product_data: { name: `OurMoment — ${title || 'Event'} (${tier})` },
         },
       },
     ],
-    metadata: { uid: request.auth.uid, eventType },
+    metadata: { uid: request.auth.uid, eventType, guestTier: tier },
   });
 
   return { url: session.url };

@@ -14,6 +14,9 @@ export type EventType =
 
 export type MemberRole = 'host' | 'guest';
 
+/** Event-size pricing tiers (drive dynamic, guest-count-based pricing). */
+export type GuestTierId = 'intimate' | 'celebration' | 'grand' | 'unlimited';
+
 export interface EventMember {
   uid: string;
   displayName: string;
@@ -74,6 +77,8 @@ export interface OurEvent {
   photoCount: number;
   /** Free-text the host gave the AI (special events only). */
   aiBrief?: string;
+  /** The guest-capacity tier this event was booked at. */
+  guestTier?: GuestTierId;
 }
 
 /** A photo the current user chose to keep — survives the purge. */
@@ -98,8 +103,8 @@ export interface EventWorld {
   coverImage: string;
   /** Whether the host describes the party and AI builds the quests. */
   aiPowered: boolean;
-  /** Indicative price shown in the in-app store, in the host's currency. */
-  priceLabel: string;
+  /** Base (Intimate-tier) price in whole dollars; larger tiers scale from this. */
+  basePrice: number;
   defaultQuests: Omit<Quest, 'completedBy'>[];
 }
 

@@ -47,8 +47,8 @@ export default function MomentScreen() {
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
         <EmptyState
           glyph="✨"
-          title="No moment yet"
-          subtitle="Enter a code to join an event, or host your own from the Store."
+          title="Your moment starts here"
+          subtitle="Got a code from a host? Jump in. Hosting your own day? Set it up in 60 seconds and hand out the code."
         >
           <View style={{ gap: 10 }}>
             <Button label="Enter event code" onPress={() => router.push('/join')} />

@@ -1,6 +1,6 @@
 import type { EventMember, OurEvent, Photo, Quest } from '@/types';
 import { EVENT_WORLDS } from './eventWorlds';
-import { decorImage } from '@/utils/images';
+import { DEMO_GALLERY_POOL } from './media';
 
 /**
  * Rich seed data for DEMO MODE — when no Firebase config is present the app
@@ -49,7 +49,7 @@ export const demoQuests: Quest[] = world.defaultQuests.map((quest, i) => ({
 
 const uploaders = demoMembers.map((m) => ({ uid: m.uid, name: m.displayName }));
 
-export const demoPhotos: Photo[] = Array.from({ length: 24 }).map((_, i) => {
+export const demoPhotos: Photo[] = Array.from({ length: 18 }).map((_, i) => {
   const uploader = uploaders[i % uploaders.length]!;
   const quest = i < demoQuests.length ? demoQuests[i] : undefined;
   return {
@@ -58,10 +58,10 @@ export const demoPhotos: Photo[] = Array.from({ length: 24 }).map((_, i) => {
     uploaderUid: uploader.uid,
     uploaderName: uploader.name,
     storagePath: `events/${DEMO_EVENT_ID}/photos/p_${i + 1}.jpg`,
-    url: decorImage(`ourmoment-photo-${i + 1}`, 1000, 1400),
-    width: 1000,
-    height: 1400,
-    createdAt: now - (24 - i) * 60 * 60 * 1000,
+    url: DEMO_GALLERY_POOL[i % DEMO_GALLERY_POOL.length]!,
+    width: 896,
+    height: 1200,
+    createdAt: now - (18 - i) * 60 * 60 * 1000,
     questId: quest?.id ?? null,
     caption: quest?.title,
   };

@@ -2,7 +2,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { httpsCallable } from 'firebase/functions';
 import { getFirebaseFunctions } from '@/lib/firebase/app';
 import { isDemoMode } from '@/lib/firebase/config';
-import type { EventType } from '@/types';
+import type { EventType, GuestTierId } from '@/types';
 
 /**
  * Booking checkout.
@@ -25,18 +25,22 @@ export interface CheckoutResult {
   status: 'paid' | 'cancelled' | 'demo';
 }
 
-export async function startCheckout(eventType: EventType, title: string): Promise<CheckoutResult> {
+export async function startCheckout(
+  eventType: EventType,
+  title: string,
+  guestTier: GuestTierId,
+): Promise<CheckoutResult> {
   if (isDemoMode) {
     // Simulate a successful purchase.
     await new Promise((r) => setTimeout(r, 900));
     return { status: 'demo' };
   }
 
-  const callable = httpsCallable<{ eventType: EventType; title: string }, { url: string }>(
-    getFirebaseFunctions(),
-    'createCheckoutSession',
-  );
-  const { data } = await callable({ eventType, title });
+  const callable = httpsCallable<
+    { eventType: EventType; title: string; guestTier: GuestTierId },
+    { url: string }
+  >(getFirebaseFunctions(), 'createCheckoutSession');
+  const { data } = await callable({ eventType, title, guestTier });
 
   const result = await WebBrowser.openAuthSessionAsync(data.url, 'ourmoment://checkout-complete');
   if (result.type === 'success') return { status: 'paid' };

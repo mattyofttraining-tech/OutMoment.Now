@@ -226,5 +226,6 @@ function toEvent(id: string, data: Record<string, unknown>): OurEvent {
     memberCount: (data.memberCount as number) ?? 0,
     photoCount: (data.photoCount as number) ?? 0,
     aiBrief: data.aiBrief as string | undefined,
+    guestTier: data.guestTier as OurEvent['guestTier'],
   };
 }

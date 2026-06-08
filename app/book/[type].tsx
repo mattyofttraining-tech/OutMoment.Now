@@ -10,10 +10,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Badge, Button, Card, IconButton, Text } from '@/components/ui';
 import { getWorld } from '@/data/eventWorlds';
-import type { EventType, OurEvent } from '@/types';
+import { GUEST_TIERS, formatPrice, perGuestLabel, priceFor } from '@/data/pricing';
+import type { EventType, GuestTierId, OurEvent } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 import { startCheckout } from '@/services/payments';
 import { haptics } from '@/utils/haptics';
+import { PressableScale } from '@/components/ui';
 
 export default function BookScreen() {
   const theme = useTheme();
@@ -27,8 +29,11 @@ export default function BookScreen() {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [brief, setBrief] = useState('');
+  const [guestTier, setGuestTier] = useState<GuestTierId>('celebration');
   const [loading, setLoading] = useState(false);
   const [created, setCreated] = useState<OurEvent | null>(null);
+
+  const price = priceFor(world.type, guestTier);
 
   const canBook = title.trim().length >= 2 && (!world.aiPowered || brief.trim().length >= 8);
 
@@ -36,7 +41,7 @@ export default function BookScreen() {
     if (!canBook || loading) return;
     setLoading(true);
     try {
-      const checkout = await startCheckout(world.type, title.trim());
+      const checkout = await startCheckout(world.type, title.trim(), guestTier);
       if (checkout.status === 'cancelled') {
         setLoading(false);
         return;
@@ -48,6 +53,7 @@ export default function BookScreen() {
         hostName: 'You',
         startsAt: Date.now(),
         aiBrief: world.aiPowered ? brief.trim() : undefined,
+        guestTier,
       });
       haptics.success();
       setCreated(event);
@@ -184,16 +190,73 @@ export default function BookScreen() {
               </Card>
             )}
           </View>
+
+          {/* Guest-size tier — pricing scales with the event */}
+          <View style={{ gap: 10 }}>
+            <View>
+              <Text variant="subhead">How big is the celebration?</Text>
+              <Text variant="caption" dim>
+                Pick the size that fits. You can always start small.
+              </Text>
+            </View>
+            {GUEST_TIERS.map((tier) => {
+              const selected = tier.id === guestTier;
+              return (
+                <PressableScale
+                  key={tier.id}
+                  activeScale={0.99}
+                  haptic
+                  onPress={() => setGuestTier(tier.id)}
+                >
+                  <Card
+                    padded={false}
+                    style={{
+                      padding: theme.spacing.md,
+                      borderWidth: 1.5,
+                      borderColor: selected ? world.accent : 'transparent',
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                      <View
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: 11,
+                          borderWidth: 2,
+                          borderColor: selected ? world.accent : theme.colors.border,
+                          backgroundColor: selected ? world.accent : 'transparent',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {selected ? <Ionicons name="checkmark" size={14} color="#fff" /> : null}
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <Text variant="headline">{tier.label}</Text>
+                          {tier.popular ? <Badge label="Most loved" /> : null}
+                        </View>
+                        <Text variant="footnote" dim>
+                          {tier.blurb}
+                        </Text>
+                      </View>
+                      <Text variant="title3">{formatPrice(priceFor(world.type, tier.id))}</Text>
+                    </View>
+                  </Card>
+                </PressableScale>
+              );
+            })}
+          </View>
         </Animated.ScrollView>
 
         <Animated.View entering={FadeInDown} style={[styles.footer, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.border }]}>
           <View style={{ flex: 1 }}>
             <Text variant="caption" dim>
-              One-time · 30-day event
+              One-time · {perGuestLabel(world.type, guestTier)}
             </Text>
-            <Text variant="title3">{world.priceLabel}</Text>
+            <Text variant="title2">{formatPrice(price)}</Text>
           </View>
-          <Button label="Book & get code" fullWidth={false} loading={loading} disabled={!canBook} onPress={onBook} style={{ minWidth: 180 }} />
+          <Button label="Book & get code" fullWidth={false} loading={loading} disabled={!canBook} onPress={onBook} style={{ minWidth: 160 }} />
         </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>

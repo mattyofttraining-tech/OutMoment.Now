@@ -1,6 +1,7 @@
 import type {
   EventMember,
   EventType,
+  GuestTierId,
   OurEvent,
   Photo,
   Quest,
@@ -15,6 +16,8 @@ export interface CreateEventInput {
   startsAt: number;
   /** Free-text brief for AI quest generation (special events). */
   aiBrief?: string;
+  /** Guest-capacity tier chosen at booking (drives price). */
+  guestTier?: GuestTierId;
 }
 
 export interface AuthUser {

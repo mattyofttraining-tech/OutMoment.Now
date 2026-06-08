@@ -68,6 +68,7 @@ export class DemoDataService implements DataService {
       memberCount: 1,
       photoCount: 0,
       aiBrief: input.aiBrief,
+      guestTier: input.guestTier ?? 'intimate',
     };
     this.events = [event, ...this.events];
     this.photosByEvent[event.id] = [];

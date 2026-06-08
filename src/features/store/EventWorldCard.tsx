@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { EventWorld } from '@/types';
 import { useTheme } from '@/theme';
 import { Badge, PressableScale, Text } from '@/components/ui';
+import { fromLabel } from '@/data/pricing';
 
 export interface EventWorldCardProps {
   world: EventWorld;
@@ -26,7 +27,7 @@ export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
 
         <View style={styles.top}>
           {world.aiPowered ? <Badge label="AI quests" icon="✨" bg="rgba(255,255,255,0.16)" color="#fff" /> : <View />}
-          <Badge label={world.priceLabel} bg="rgba(255,255,255,0.16)" color="#fff" />
+          <Badge label={fromLabel(world.type)} bg="rgba(255,255,255,0.16)" color="#fff" />
         </View>
 
         <View style={styles.bottom}>

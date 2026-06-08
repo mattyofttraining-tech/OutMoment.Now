@@ -1,5 +1,5 @@
 import type { EventWorld, EventType } from '@/types';
-import { decorImage } from '@/utils/images';
+import { EVENT_COVERS } from './media';
 
 /**
  * The five event worlds. Each is a self-contained little universe: its own
@@ -21,15 +21,15 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   marriage: {
     type: 'marriage',
     name: 'Marriage',
-    tagline: 'Two stories become one',
+    tagline: 'The moments your photographer will miss',
     description:
-      'For weddings and the day everything changed. Capture the vows, the tears, the first dance — and every glance in between.',
+      'Your photographer captures the shots you posed for. OurMoment captures everything else — the happy tears, the 1am dance floor, the toast that stole the night — seen through the eyes of everyone who showed up. You’ll experience your own wedding for the first time.',
     glyph: '💍',
     accent: '#C9A227',
     gradient: ['#2A2113', '#0B0B0F'],
-    coverImage: decorImage('ourmoment-wedding', 1400, 1800),
+    coverImage: EVENT_COVERS.marriage,
     aiPowered: false,
-    priceLabel: '$149',
+    basePrice: 79,
     defaultQuests: [
       quest('💍', 'The Rings', 'A close-up of the rings before they’re worn.'),
       quest('👰', 'First Look', 'The moment they see each other.'),
@@ -47,15 +47,15 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   confirmation: {
     type: 'confirmation',
     name: 'Confirmation',
-    tagline: 'A milestone of faith',
+    tagline: 'One milestone. A hundred points of view.',
     description:
-      'For confirmations and coming-of-age days. The ceremony, the family table, and the pride on everyone’s faces.',
+      'The proud glances, the whole family around the table, the quiet moment that mattered most. Hand every guest a camera and relive the day from every seat in the room.',
     glyph: '✝️',
     accent: '#6C7BD6',
     gradient: ['#171A2E', '#0B0B0F'],
-    coverImage: decorImage('ourmoment-confirmation', 1400, 1800),
+    coverImage: EVENT_COVERS.confirmation,
     aiPowered: false,
-    priceLabel: '$89',
+    basePrice: 49,
     defaultQuests: [
       quest('✝️', 'The Ceremony', 'A photo from inside the service.'),
       quest('🕯️', 'The Candle', 'Light, candles, or stained glass.'),
@@ -72,15 +72,15 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   baptism: {
     type: 'baptism',
     name: 'Baptism',
-    tagline: 'A gentle beginning',
+    tagline: 'They won’t remember it. You’ll never forget it.',
     description:
-      'For christenings and baptisms. Tiny hands, quiet moments and the people who showed up for the very start.',
+      'Tiny hands, godparents’ smiles, the people who showed up for the very beginning — gathered into one tender gallery before the day slips away.',
     glyph: '🕊️',
     accent: '#5BB8C4',
     gradient: ['#102A2D', '#0B0B0F'],
-    coverImage: decorImage('ourmoment-baptism', 1400, 1800),
+    coverImage: EVENT_COVERS.baptism,
     aiPowered: false,
-    priceLabel: '$89',
+    basePrice: 49,
     defaultQuests: [
       quest('🕊️', 'The Blessing', 'A photo from the ceremony.'),
       quest('👶', 'Tiny Hands', 'A close-up of little hands or feet.'),
@@ -97,15 +97,15 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   birthday: {
     type: 'birthday',
     name: 'Birthday',
-    tagline: 'Another trip around the sun',
+    tagline: 'The party, captured by the people in it.',
     description:
-      'For birthdays of every age. The cake, the candles, the dancefloor and all the chaos worth remembering.',
+      'The cake, the crowd, the surprise on their face — caught from every angle by everyone there. No more begging friends to “send me that photo.” It’s all already here.',
     glyph: '🎂',
     accent: '#FF6B9D',
     gradient: ['#2E1320', '#0B0B0F'],
-    coverImage: decorImage('ourmoment-birthday', 1400, 1800),
+    coverImage: EVENT_COVERS.birthday,
     aiPowered: false,
-    priceLabel: '$69',
+    basePrice: 39,
     defaultQuests: [
       quest('🎂', 'The Cake', 'The cake before it’s cut.'),
       quest('🕯️', 'Make a Wish', 'Blowing out the candles.'),
@@ -123,17 +123,15 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   special: {
     type: 'special',
     name: 'Special Moments',
-    tagline: 'You describe it. We’ll write the quests.',
+    tagline: 'You describe the party. AI writes the quests.',
     description:
-      'For everything else — reunions, retirements, anniversaries, a Tuesday that mattered. Tell us about your party and our AI crafts a custom set of photo quests just for it.',
+      'Reunion, retirement, anniversary, or a Tuesday that mattered — tell us about it in a sentence and our AI builds a custom set of photo missions, so nothing worth remembering goes uncaptured.',
     glyph: '✨',
     accent: '#9B6BFF',
     gradient: ['#1F1633', '#0B0B0F'],
-    coverImage: decorImage('ourmoment-special', 1400, 1800),
+    coverImage: EVENT_COVERS.special,
     aiPowered: true,
-    priceLabel: '$99',
-    // Fallback pack used if AI generation is unavailable; normally replaced
-    // by quests generated from the host's brief.
+    basePrice: 59,
     defaultQuests: [
       quest('✨', 'The Reason', 'A photo that captures why you’re all here.'),
       quest('👥', 'Everyone', 'Get as many people as possible in one shot.'),

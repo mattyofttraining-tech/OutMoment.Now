@@ -11,9 +11,9 @@ export default function StoreScreen() {
   return (
     <Screen scroll edges={['top']}>
       <View style={{ paddingTop: 8, paddingBottom: 16 }}>
-        <Text variant="largeTitle">Host an event</Text>
+        <Text variant="largeTitle">Don’t let the day disappear</Text>
         <Text variant="callout" dim style={{ marginTop: 4 }}>
-          Pick a world, name your day, and we’ll hand you a code to share. Your guests join in seconds.
+          Pick your moment, share one code, and turn every guest into your photographer. Hundreds of photos you’d never have seen — for less than the cost of a single print.
         </Text>
       </View>
 

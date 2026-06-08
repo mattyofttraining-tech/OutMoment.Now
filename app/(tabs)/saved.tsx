@@ -41,8 +41,8 @@ export default function SavedScreen() {
             <View style={{ flex: 1, justifyContent: 'center', paddingTop: 80 }}>
               <EmptyState
                 glyph="🤍"
-                title="Nothing saved yet"
-                subtitle="Open the Save swipe and keep the photos that matter. Everything you keep here is permanent."
+                title="Your keepers live here"
+                subtitle="Open the Save swipe and keep the photos that matter. What you keep is yours forever — what you don’t is gone at 30 days."
               />
             </View>
           }
