@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Button, EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
+import { Confetti } from '@/components/Confetti';
 import { SwipeDeck, type SwipeDeckHandle } from '@/features/swipe/SwipeDeck';
 import { useAppStore } from '@/store/useAppStore';
 import type { Photo, SwipeDecision } from '@/types';
@@ -59,6 +60,7 @@ export default function SwipeScreen() {
           </View>
         ) : done ? (
           <Animated.View entering={FadeIn} style={styles.center}>
+            {savedCount > 0 ? <Confetti count={36} /> : null}
             <EmptyState
               glyph="🤍"
               title="That’s every photo"

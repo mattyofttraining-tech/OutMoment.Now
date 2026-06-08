@@ -9,6 +9,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Button, IconButton, PressableScale, Text } from '@/components/ui';
+import { Confetti } from '@/components/Confetti';
 import { useAppStore } from '@/store/useAppStore';
 import { haptics } from '@/utils/haptics';
 
@@ -136,6 +137,7 @@ export default function CaptureScreen() {
       {/* Capture confirmation flash */}
       {justCaptured ? (
         <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(300)} style={styles.confirm}>
+          {quest ? <Confetti /> : null}
           <Ionicons name="checkmark-circle" size={72} color={theme.colors.success} />
           <Text variant="title3" color="#fff" style={{ marginTop: 8 }}>
             {quest ? 'Quest complete!' : 'Added to the moment'}
