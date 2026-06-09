@@ -85,9 +85,24 @@ async function main() {
     'settings[branding][secondary_color]': SECONDARY_COLOR,
     'business_profile[name]': 'OurMoment',
   });
-  await api(key, 'POST', 'https://api.stripe.com/v1/account', params, {
-    'Content-Type': 'application/x-www-form-urlencoded',
-  });
+  try {
+    await api(key, 'POST', 'https://api.stripe.com/v1/account', params, {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+  } catch (err) {
+    if (/only live keys/i.test(String(err.message))) {
+      // Stripe blocks account updates with sandbox keys — set branding by hand.
+      console.log('\n⚠ Sandbox keys cannot update branding via the API. Set it in the Dashboard:');
+      console.log('   Settings (gear, top right) → Business → Branding, then:');
+      console.log(`   • Icon  : upload ${ICON_PNG}`);
+      console.log(`   • Logo  : upload ${LOGO_PNG}`);
+      console.log(`   • Brand color : ${PRIMARY_COLOR}`);
+      console.log(`   • Accent color: ${SECONDARY_COLOR}`);
+      console.log('   (At go-live, rerun this script with the live key — it works there.)');
+      return;
+    }
+    throw err;
+  }
 
   console.log('\n✅ Branding applied:');
   console.log(`   brand color  : ${PRIMARY_COLOR} (peach)`);
