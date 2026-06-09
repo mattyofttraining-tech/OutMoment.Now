@@ -8,8 +8,10 @@ import type {
   SavedPhoto,
 } from '@/types';
 import { getDataService, type CreateEventInput } from '@/services';
+import { deviceLocale, isSupportedLocale, setI18nLocale, type LocaleCode } from '@/i18n';
 
 const ONBOARDED_KEY = 'ourmoment.onboarded.v1';
+const LOCALE_KEY = 'ourmoment.locale.v1';
 
 interface AppState {
   ready: boolean;
@@ -17,6 +19,7 @@ interface AppState {
   uid: string | null;
   displayName: string;
   hasOnboarded: boolean;
+  locale: LocaleCode;
 
   myEvents: OurEvent[];
   activeEventId: string | null;
@@ -35,6 +38,8 @@ interface AppState {
   // events
   joinByCode: (code: string, displayName: string) => Promise<OurEvent>;
   createEvent: (input: CreateEventInput) => Promise<OurEvent>;
+  deleteEvent: (eventId: string) => Promise<void>;
+  leaveEvent: (eventId: string) => Promise<void>;
   setActiveEvent: (eventId: string) => void;
   loadEventDetail: (eventId: string) => Promise<void>;
   subscribeToPhotos: (eventId: string) => () => void;
@@ -48,6 +53,7 @@ interface AppState {
 
   setDisplayName: (name: string) => Promise<void>;
   completeOnboarding: () => Promise<void>;
+  setLocale: (code: LocaleCode) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -56,6 +62,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   uid: null,
   displayName: 'You',
   hasOnboarded: false,
+  locale: 'en',
 
   myEvents: [],
   activeEventId: null,
@@ -70,10 +77,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   async bootstrap() {
     const svc = getDataService();
     try {
-      const [user, onboardedRaw] = await Promise.all([
+      const [user, onboardedRaw, localeRaw] = await Promise.all([
         svc.ensureAuth(),
         AsyncStorage.getItem(ONBOARDED_KEY).catch(() => null),
+        AsyncStorage.getItem(LOCALE_KEY).catch(() => null),
       ]);
+      // Persisted choice wins; otherwise match the device language (fallback en).
+      const locale = isSupportedLocale(localeRaw) ? localeRaw : deviceLocale();
+      setI18nLocale(locale);
       // Data fetches are non-fatal: a backend hiccup (e.g. a still-building
       // index) must never block app launch. Come up empty and refresh later.
       const [events, saved] = await Promise.all([
@@ -91,6 +102,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         uid: user.uid,
         displayName: user.displayName ?? get().displayName,
         hasOnboarded: onboardedRaw === 'true',
+        locale,
         myEvents: events,
         activeEventId: events[0]?.id ?? get().activeEventId,
         saved,
@@ -106,6 +118,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   async completeOnboarding() {
     set({ hasOnboarded: true });
     await AsyncStorage.setItem(ONBOARDED_KEY, 'true').catch(() => {});
+  },
+
+  setLocale(code) {
+    setI18nLocale(code);
+    set({ locale: code });
+    AsyncStorage.setItem(LOCALE_KEY, code).catch(() => {});
   },
 
   async refreshMyEvents() {
@@ -132,6 +150,48 @@ export const useAppStore = create<AppState>((set, get) => ({
       myEvents: dedupeEvents([event, ...s.myEvents]),
     }));
     return event;
+  },
+
+  async deleteEvent(eventId) {
+    await getDataService().deleteEvent(eventId);
+    set((s) => {
+      const myEvents = s.myEvents.filter((e) => e.id !== eventId);
+      const photosByEvent = { ...s.photosByEvent };
+      const questsByEvent = { ...s.questsByEvent };
+      const membersByEvent = { ...s.membersByEvent };
+      delete photosByEvent[eventId];
+      delete questsByEvent[eventId];
+      delete membersByEvent[eventId];
+      return {
+        myEvents,
+        photosByEvent,
+        questsByEvent,
+        membersByEvent,
+        activeEventId:
+          s.activeEventId === eventId ? (myEvents[0]?.id ?? null) : s.activeEventId,
+      };
+    });
+  },
+
+  async leaveEvent(eventId) {
+    await getDataService().leaveEvent(eventId);
+    set((s) => {
+      const myEvents = s.myEvents.filter((e) => e.id !== eventId);
+      const photosByEvent = { ...s.photosByEvent };
+      const questsByEvent = { ...s.questsByEvent };
+      const membersByEvent = { ...s.membersByEvent };
+      delete photosByEvent[eventId];
+      delete questsByEvent[eventId];
+      delete membersByEvent[eventId];
+      return {
+        myEvents,
+        photosByEvent,
+        questsByEvent,
+        membersByEvent,
+        activeEventId:
+          s.activeEventId === eventId ? (myEvents[0]?.id ?? null) : s.activeEventId,
+      };
+    });
   },
 
   setActiveEvent(eventId) {
