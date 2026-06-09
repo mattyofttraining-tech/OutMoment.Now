@@ -224,6 +224,49 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
   return { url: session.url };
 });
 
+/** Host-only hard delete of an event and all its photos / quests / members. */
+export const deleteEvent = onCall(async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Sign in first.');
+  const { eventId } = request.data as { eventId?: string };
+  if (!eventId) throw new HttpsError('invalid-argument', 'Missing eventId.');
+
+  const ref = db.collection('events').doc(eventId);
+  const snap = await ref.get();
+  if (!snap.exists) return { deleted: true }; // already gone — idempotent
+  if (snap.data()?.hostUid !== uid) {
+    throw new HttpsError('permission-denied', 'Only the host can delete this event.');
+  }
+
+  // Same hard delete as the scheduled purge: Storage objects, then Firestore tree.
+  await getStorage().bucket().deleteFiles({ prefix: `events/${eventId}/` });
+  await db.recursiveDelete(ref);
+  logger.info(`Host ${uid} deleted event ${eventId}.`);
+  return { deleted: true };
+});
+
+/** A guest removes themselves from an event. Hosts must delete instead. */
+export const leaveEvent = onCall(async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Sign in first.');
+  const { eventId } = request.data as { eventId?: string };
+  if (!eventId) throw new HttpsError('invalid-argument', 'Missing eventId.');
+
+  const ref = db.collection('events').doc(eventId);
+  const snap = await ref.get();
+  if (!snap.exists) return { left: true }; // already gone — idempotent
+  if (snap.data()?.hostUid === uid) {
+    throw new HttpsError('failed-precondition', 'The host cannot leave — delete the event instead.');
+  }
+  await ref.update({
+    memberUids: FieldValue.arrayRemove(uid),
+    memberCount: FieldValue.increment(-1),
+  });
+  await ref.collection('members').doc(uid).delete().catch(() => {});
+  logger.info(`Guest ${uid} left event ${eventId}.`);
+  return { left: true };
+});
+
 /**
  * THE PRODUCT: a hard, irreversible delete of every event past its 30-day life.
  * Runs daily. Deletes Storage objects first, then the Firestore tree.
