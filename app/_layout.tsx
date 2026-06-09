@@ -50,22 +50,25 @@ export default function RootLayout() {
   const bootstrap = useAppStore((s) => s.bootstrap);
   const ready = useAppStore((s) => s.ready);
 
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  // Don't let a font failure (e.g. on web) strand the app on a blank splash —
+  // fall back to system fonts once fonts either load or error out.
+  const fontsReady = fontsLoaded || Boolean(fontError);
 
   useEffect(() => {
     bootstrap().catch((err) => console.warn('Bootstrap failed:', err));
   }, [bootstrap]);
 
   useEffect(() => {
-    if (fontsLoaded && ready) SplashScreen.hideAsync().catch(() => {});
-  }, [fontsLoaded, ready]);
+    if (fontsReady && ready) SplashScreen.hideAsync().catch(() => {});
+  }, [fontsReady, ready]);
 
-  if (!fontsLoaded || !ready) return null;
+  if (!fontsReady || !ready) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

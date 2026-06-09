@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { View, type PressableProps, type ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { PressableScale } from './PressableScale';
@@ -13,6 +13,8 @@ export interface IconButtonProps {
   surface?: boolean;
   disabled?: boolean;
   style?: ViewStyle;
+  /** Extra tap area beyond the button bounds, for small/critical targets. */
+  hitSlop?: PressableProps['hitSlop'];
 }
 
 export function IconButton({
@@ -23,6 +25,7 @@ export function IconButton({
   surface = false,
   disabled,
   style,
+  hitSlop,
 }: IconButtonProps) {
   const theme = useTheme();
   const dimension = size + 20;
@@ -30,6 +33,7 @@ export function IconButton({
     <PressableScale
       onPress={onPress}
       disabled={disabled}
+      hitSlop={hitSlop}
       haptic
       style={[
         {

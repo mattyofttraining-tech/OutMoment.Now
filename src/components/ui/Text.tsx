@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
+import { StyleSheet, Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
 import { useTheme, type TypographyVariant } from '@/theme';
 import { resolveFont } from '@/utils/fonts';
 
@@ -35,6 +35,15 @@ export function Text({
       : (color as string)) ??
     (dim ? theme.colors.textSecondary : theme.colors.text);
 
+  // When a caller overrides fontSize (e.g. emoji glyphs at fontSize 56) without
+  // a matching lineHeight, the variant's small lineHeight clips the tall glyph.
+  // Give it room so emojis and oversized text are never cut off.
+  const flat = StyleSheet.flatten(style) as TextStyle | undefined;
+  const emojiSafeLineHeight =
+    flat && typeof flat.fontSize === 'number' && flat.lineHeight === undefined
+      ? { lineHeight: Math.ceil(flat.fontSize * 1.3) }
+      : null;
+
   return (
     <RNText
       {...rest}
@@ -44,6 +53,7 @@ export function Text({
         { color: resolvedColor as string },
         align ? { textAlign: align } : null,
         style,
+        emojiSafeLineHeight,
       ]}
     />
   );

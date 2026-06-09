@@ -1,4 +1,4 @@
-import { Image as RNImage } from 'react-native';
+import { Asset } from 'expo-asset';
 import type { EventType } from '@/types';
 
 /**
@@ -15,8 +15,10 @@ import type { EventType } from '@/types';
 
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3EeygzZkZF3sIzA9qAaLtwa7A0N';
 
-/** Turn a bundled `require(...)` asset into a URI string usable by expo-image. */
-const bundled = (mod: number): string => RNImage.resolveAssetSource(mod).uri;
+/** Turn a bundled `require(...)` asset into a URI string usable by expo-image.
+ *  Uses expo-asset so it works on both native and web (RN's resolveAssetSource
+ *  doesn't exist in react-native-web). */
+const bundled = (mod: number): string => Asset.fromModule(mod).uri;
 
 /** Full-quality hero/cover images. */
 export const EVENT_COVERS: Record<EventType, string> = {
