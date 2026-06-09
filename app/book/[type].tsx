@@ -10,9 +10,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Badge, Button, Card, IconButton, Text } from '@/components/ui';
 import { getWorld } from '@/data/eventWorlds';
-import { GUEST_TIERS, formatPrice, perGuestLabel, priceFor } from '@/data/pricing';
+import { GUEST_TIERS, formatPrice, priceFor } from '@/data/pricing';
 import type { EventType, GuestTierId, OurEvent } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import { startCheckout } from '@/services/payments';
 import { haptics } from '@/utils/haptics';
 import { PressableScale } from '@/components/ui';
@@ -20,6 +21,7 @@ import { PressableScale } from '@/components/ui';
 export default function BookScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   const { type } = useLocalSearchParams<{ type: EventType }>();
   const world = getWorld((type ?? 'special') as EventType);
 
@@ -41,7 +43,9 @@ export default function BookScreen() {
     if (!canBook || loading) return;
     setLoading(true);
     try {
+      console.log('[book] starting checkout', { type: world.type, guestTier });
       const checkout = await startCheckout(world.type, title.trim(), guestTier);
+      console.log('[book] checkout result', checkout);
       if (checkout.status === 'cancelled') {
         setLoading(false);
         return;
@@ -57,7 +61,8 @@ export default function BookScreen() {
       });
       haptics.success();
       setCreated(event);
-    } catch {
+    } catch (e) {
+      console.warn('[book] booking failed:', e);
       haptics.warning();
       setLoading(false);
     }
@@ -77,10 +82,10 @@ export default function BookScreen() {
           <Animated.View entering={FadeIn.duration(600)} style={{ alignItems: 'center', gap: 8 }}>
             <Text style={{ fontSize: 56 }}>{world.glyph}</Text>
             <Text variant="title1" color="#fff" align="center">
-              {created.title} is ready
+              {created.title} {t('book.ready')}
             </Text>
             <Text variant="callout" color="rgba(255,255,255,0.8)" align="center">
-              Share this code with your guests. They enter it to join — nothing else needed.
+              {t('book.shareDesc')}
             </Text>
 
             <View style={styles.codeBox}>
@@ -88,12 +93,12 @@ export default function BookScreen() {
                 {created.code}
               </Text>
             </View>
-            <Badge label="Expires in 30 days" bg="rgba(255,255,255,0.16)" color="#fff" />
+            <Badge label={t('book.expires')} bg="rgba(255,255,255,0.16)" color="#fff" />
           </Animated.View>
 
           <View style={{ gap: 12 }}>
             <Button
-              label="Share code"
+              label={t('book.shareCode')}
               icon={<Ionicons name="share-outline" size={20} color={theme.colors.onAccent} />}
               onPress={() =>
                 Share.share({
@@ -102,7 +107,7 @@ export default function BookScreen() {
               }
             />
             <Button
-              label="Copy code"
+              label={t('book.copyCode')}
               variant="secondary"
               onPress={async () => {
                 await Clipboard.setStringAsync(created.code);
@@ -110,7 +115,7 @@ export default function BookScreen() {
               }}
             />
             <Button
-              label="Go to event"
+              label={t('book.goToEvent')}
               variant="ghost"
               onPress={() => {
                 setActiveEvent(created.id);
@@ -148,7 +153,7 @@ export default function BookScreen() {
           </View>
 
           <View style={{ gap: 12 }}>
-            <Field label="Event name">
+            <Field label={t('book.eventName')}>
               <TextInput
                 value={title}
                 onChangeText={setTitle}
@@ -158,7 +163,7 @@ export default function BookScreen() {
               />
             </Field>
 
-            <Field label="A little detail (optional)" hint="Place, people, or a date — shown on the cover.">
+            <Field label={t('book.detailLabel')} hint={t('book.detailHint')}>
               <TextInput
                 value={subtitle}
                 onChangeText={setSubtitle}
@@ -169,7 +174,7 @@ export default function BookScreen() {
             </Field>
 
             {world.aiPowered ? (
-              <Field label="Describe your party" hint="Our AI turns this into a custom set of photo quests.">
+              <Field label={t('book.describeLabel')} hint={t('book.describeHint')}>
                 <TextInput
                   value={brief}
                   onChangeText={setBrief}
@@ -184,7 +189,7 @@ export default function BookScreen() {
                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                   <Ionicons name="sparkles" size={20} color={theme.colors.accent} />
                   <Text variant="footnote" dim style={{ flex: 1 }}>
-                    Comes with {world.defaultQuests.length} hand-crafted photo quests for {world.name.toLowerCase()}.
+                    {world.defaultQuests.length} {t('book.questsIncluded')}
                   </Text>
                 </View>
               </Card>
@@ -194,9 +199,9 @@ export default function BookScreen() {
           {/* Guest-size tier — pricing scales with the event */}
           <View style={{ gap: 10 }}>
             <View>
-              <Text variant="subhead">How big is the celebration?</Text>
+              <Text variant="subhead">{t('book.howBig')}</Text>
               <Text variant="caption" dim>
-                Pick the size that fits. You can always start small.
+                {t('book.pickSize')}
               </Text>
             </View>
             {GUEST_TIERS.map((tier) => {
@@ -234,7 +239,7 @@ export default function BookScreen() {
                       <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                           <Text variant="headline">{tier.label}</Text>
-                          {tier.popular ? <Badge label="Most loved" /> : null}
+                          {tier.popular ? <Badge label={t('book.mostLoved')} /> : null}
                         </View>
                         <Text variant="footnote" dim>
                           {tier.blurb}
@@ -252,11 +257,11 @@ export default function BookScreen() {
         <Animated.View entering={FadeInDown} style={[styles.footer, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.border }]}>
           <View style={{ flex: 1 }}>
             <Text variant="caption" dim>
-              One-time · {perGuestLabel(world.type, guestTier)}
+              {t('book.oneTime')}
             </Text>
             <Text variant="title2">{formatPrice(price)}</Text>
           </View>
-          <Button label="Book & get code" fullWidth={false} loading={loading} disabled={!canBook} onPress={onBook} style={{ minWidth: 160 }} />
+          <Button label={t('book.book')} fullWidth={false} loading={loading} disabled={!canBook} onPress={onBook} style={{ minWidth: 160 }} />
         </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>

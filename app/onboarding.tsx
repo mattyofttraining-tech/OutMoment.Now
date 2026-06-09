@@ -9,6 +9,7 @@ import { useTheme } from '@/theme';
 import { Button, PressableScale, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { EVENT_COVERS, WELCOME_IMAGE } from '@/data/media';
+import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
 
 const { width } = Dimensions.get('window');
@@ -16,34 +17,20 @@ const { width } = Dimensions.get('window');
 interface Slide {
   image: string;
   glyph: string;
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
 }
 
 const SLIDES: Slide[] = [
-  {
-    image: WELCOME_IMAGE,
-    glyph: '📸',
-    title: 'Everyone’s camera.\nOne gallery.',
-    body: 'Your guests capture the day from every angle — pooled into one private place only your group can see.',
-  },
-  {
-    image: EVENT_COVERS.birthday,
-    glyph: '🎯',
-    title: 'Make it a game.',
-    body: 'Playful photo quests nudge everyone to catch the moments that matter — the cake, the candids, the chaos.',
-  },
-  {
-    image: EVENT_COVERS.marriage,
-    glyph: '⏳',
-    title: 'Save it,\nor lose it.',
-    body: 'In 30 days the whole gallery is gone forever. Swipe to keep your favourites before they vanish. That’s the magic.',
-  },
+  { image: WELCOME_IMAGE, glyph: '📸', titleKey: 'onboarding.s1Title', bodyKey: 'onboarding.s1Body' },
+  { image: EVENT_COVERS.birthday, glyph: '🎯', titleKey: 'onboarding.s2Title', bodyKey: 'onboarding.s2Body' },
+  { image: EVENT_COVERS.marriage, glyph: '⏳', titleKey: 'onboarding.s3Title', bodyKey: 'onboarding.s3Body' },
 ];
 
 export default function Onboarding() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const listRef = useRef<FlatList<Slide>>(null);
   const [index, setIndex] = useState(0);
@@ -90,10 +77,10 @@ export default function Onboarding() {
               <Animated.View entering={FadeIn.duration(500)} style={{ gap: 12 }}>
                 <Text style={{ fontSize: 40 }}>{item.glyph}</Text>
                 <Text variant="largeTitle" color="#fff" style={{ fontSize: 38, lineHeight: 44 }}>
-                  {item.title}
+                  {t(item.titleKey)}
                 </Text>
                 <Text variant="title3" weight="400" color="rgba(255,255,255,0.78)">
-                  {item.body}
+                  {t(item.bodyKey)}
                 </Text>
               </Animated.View>
             </SafeAreaView>
@@ -105,7 +92,7 @@ export default function Onboarding() {
       <SafeAreaView style={styles.skip} pointerEvents="box-none">
         <PressableScale onPress={finish} style={{ padding: 12 }}>
           <Text variant="subhead" color="rgba(255,255,255,0.7)">
-            Skip
+            {t('onboarding.skip')}
           </Text>
         </PressableScale>
       </SafeAreaView>
@@ -125,7 +112,7 @@ export default function Onboarding() {
             />
           ))}
         </View>
-        <Button label={isLast ? 'Get started' : 'Next'} onPress={next} />
+        <Button label={isLast ? t('onboarding.getStarted') : t('onboarding.next')} onPress={next} />
       </SafeAreaView>
     </View>
   );

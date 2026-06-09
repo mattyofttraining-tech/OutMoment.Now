@@ -10,12 +10,14 @@ import { CountdownBadge } from '@/components/CountdownBadge';
 import { Confetti } from '@/components/Confetti';
 import { SwipeDeck, type SwipeDeckHandle } from '@/features/swipe/SwipeDeck';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import type { Photo, SwipeDecision } from '@/types';
 import { exportPhotoToLibrary } from '@/services/media';
 
 export default function SwipeScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const activeEventId = useAppStore((s) => s.activeEventId);
   const myEvents = useAppStore((s) => s.myEvents);
@@ -56,19 +58,15 @@ export default function SwipeScreen() {
 
         {photos.length === 0 ? (
           <View style={styles.center}>
-            <EmptyState glyph="📭" title="Nothing to save yet" subtitle="Photos will appear here as your event fills up." />
+            <EmptyState glyph="📭" title={t('swipe.emptyTitle')} subtitle={t('swipe.emptyBody')} />
           </View>
         ) : done ? (
           <Animated.View entering={FadeIn} style={styles.center}>
             {savedCount > 0 ? <Confetti count={36} /> : null}
-            <EmptyState
-              glyph="🤍"
-              title="That’s every photo"
-              subtitle={`You kept ${savedCount} ${savedCount === 1 ? 'moment' : 'moments'}. They’re yours forever — everything else fades at 30 days.`}
-            >
+            <EmptyState glyph="🤍" title={t('swipe.doneTitle')} subtitle={t('swipe.doneBody')}>
               <View style={{ gap: 10 }}>
-                <Button label="See my saved" onPress={() => router.replace('/(tabs)/saved')} />
-                <Button label="Done" variant="secondary" onPress={() => router.back()} />
+                <Button label={t('swipe.seeSaved')} onPress={() => router.replace('/(tabs)/saved')} />
+                <Button label={t('swipe.done')} variant="secondary" onPress={() => router.back()} />
               </View>
             </EmptyState>
           </Animated.View>
@@ -80,7 +78,7 @@ export default function SwipeScreen() {
 
             <View style={styles.hint}>
               <Text variant="footnote" dim align="center">
-                Swipe right to keep · left to let go
+                {t('swipe.hint')}
               </Text>
             </View>
 

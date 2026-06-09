@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -8,26 +8,70 @@ import { useTheme } from '@/theme';
 import { Button, EmptyState, IconButton, PressableScale, Screen, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import { getWorld } from '@/data/eventWorlds';
+import type { OurEvent } from '@/types';
 
 export default function EventsScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
+  const uid = useAppStore((s) => s.uid);
   const myEvents = useAppStore((s) => s.myEvents);
   const activeEventId = useAppStore((s) => s.activeEventId);
   const setActiveEvent = useAppStore((s) => s.setActiveEvent);
+  const deleteEvent = useAppStore((s) => s.deleteEvent);
+  const leaveEvent = useAppStore((s) => s.leaveEvent);
+
+  const confirmRemove = (event: OurEvent, isHost: boolean) => {
+    Alert.alert(
+      isHost ? t('events.deleteTitle') : t('events.leaveTitle'),
+      isHost ? t('events.deleteBody') : t('events.leaveBody'),
+      [
+        { text: t('events.cancel'), style: 'cancel' },
+        {
+          text: isHost ? t('events.delete') : t('events.leave'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (isHost) await deleteEvent(event.id);
+              else await leaveEvent(event.id);
+            } catch (e) {
+              console.warn('[events] remove failed', e);
+              Alert.alert(t('events.failed'), t('events.tryAgain'));
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const onPressEvent = (event: OurEvent) => {
+    const isHost = event.hostUid === uid;
+    Alert.alert(event.title, undefined, [
+      {
+        text: t('events.open'),
+        onPress: () => {
+          setActiveEvent(event.id);
+          router.back();
+        },
+      },
+      { text: isHost ? t('events.deleteEvent') : t('events.leaveEvent'), style: 'destructive', onPress: () => confirmRemove(event, isHost) },
+      { text: t('events.cancel'), style: 'cancel' },
+    ]);
+  };
 
   return (
     <Screen edges={['top']}>
       <View style={styles.header}>
-        <Text variant="title1">Your events</Text>
+        <Text variant="title1">{t('events.title')}</Text>
         <IconButton name="close" surface onPress={() => router.back()} />
       </View>
 
       {myEvents.length === 0 ? (
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <EmptyState glyph="✨" title="No events yet" subtitle="Join one with a code, or host your own." />
+          <EmptyState glyph="✨" title={t('events.emptyTitle')} subtitle={t('events.emptyBody')} />
         </View>
       ) : (
         <View style={{ gap: 12, marginTop: 8 }}>
@@ -39,10 +83,7 @@ export default function EventsScreen() {
                 key={event.id}
                 haptic
                 activeScale={0.98}
-                onPress={() => {
-                  setActiveEvent(event.id);
-                  router.back();
-                }}
+                onPress={() => onPressEvent(event)}
               >
                 <View style={[styles.row, { borderRadius: theme.radius.xl, borderColor: active ? world.accent : 'transparent' }]}>
                   <Image source={{ uri: event.coverImage }} style={StyleSheet.absoluteFill} contentFit="cover" />
@@ -59,7 +100,7 @@ export default function EventsScreen() {
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
                         <CountdownBadge expiresAt={event.expiresAt} />
                         <Text variant="caption" color="rgba(255,255,255,0.7)">
-                          {event.photoCount} photos
+                          {event.photoCount} {t('events.photos')}
                         </Text>
                       </View>
                     </View>
@@ -72,8 +113,8 @@ export default function EventsScreen() {
       )}
 
       <View style={{ gap: 10, marginTop: 24 }}>
-        <Button label="Join with a code" variant="secondary" onPress={() => { router.back(); router.push('/join'); }} />
-        <Button label="Host an event" variant="ghost" onPress={() => { router.back(); router.push('/(tabs)/store'); }} />
+        <Button label={t('events.joinWithCode')} variant="secondary" onPress={() => { router.back(); router.push('/join'); }} />
+        <Button label={t('events.hostEvent')} variant="ghost" onPress={() => { router.back(); router.push('/(tabs)/store'); }} />
       </View>
     </Screen>
   );

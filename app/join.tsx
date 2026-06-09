@@ -4,12 +4,14 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
 import { Button, IconButton, Screen, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import { normalizeCode } from '@/utils/code';
 import { haptics } from '@/utils/haptics';
 
 export default function JoinScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   const joinByCode = useAppStore((s) => s.joinByCode);
   const isDemo = useAppStore((s) => s.isDemo);
 
@@ -30,7 +32,7 @@ export default function JoinScreen() {
       router.replace('/(tabs)');
     } catch (e) {
       haptics.warning();
-      setError(e instanceof Error ? e.message : 'That code didn’t work. Check it and try again.');
+      setError(e instanceof Error ? e.message : t('join.error'));
     } finally {
       setLoading(false);
     }
@@ -45,9 +47,9 @@ export default function JoinScreen() {
 
         <View style={{ flex: 1, justifyContent: 'center', gap: theme.spacing.xl }}>
           <View style={{ gap: 6 }}>
-            <Text variant="largeTitle">Join your event</Text>
+            <Text variant="largeTitle">{t('join.title')}</Text>
             <Text variant="callout" dim>
-              Enter the code your host shared with you. It unlocks one private event — nothing else.
+              {t('join.subtitle')}
             </Text>
           </View>
 
@@ -65,7 +67,7 @@ export default function JoinScreen() {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder="Your name"
+              placeholder={t('join.namePlaceholder')}
               placeholderTextColor={theme.colors.textTertiary}
               autoCapitalize="words"
               returnKeyType="go"
@@ -79,12 +81,12 @@ export default function JoinScreen() {
             ) : null}
             {isDemo ? (
               <Text variant="caption" dim>
-                Demo mode — any code drops you into a showcase wedding.
+                {t('join.demoNote')}
               </Text>
             ) : null}
           </View>
 
-          <Button label="Join the moment" onPress={onJoin} disabled={!canJoin} loading={loading} />
+          <Button label={t('join.join')} onPress={onJoin} disabled={!canJoin} loading={loading} />
         </View>
       </KeyboardAvoidingView>
     </Screen>

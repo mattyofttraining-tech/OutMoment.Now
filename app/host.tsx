@@ -1,18 +1,20 @@
 import React, { useEffect, useMemo } from 'react';
-import { Share, StyleSheet, View } from 'react-native';
+import { Alert, Share, StyleSheet, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Avatar, Badge, Button, Card, EmptyState, IconButton, ProgressRing, Screen, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import { getWorld } from '@/data/eventWorlds';
-import { getCountdown, countdownLabel } from '@/utils/time';
+import { getCountdown } from '@/utils/time';
 import { haptics } from '@/utils/haptics';
 
 export default function HostScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const uid = useAppStore((s) => s.uid);
   const activeEventId = useAppStore((s) => s.activeEventId);
@@ -22,6 +24,7 @@ export default function HostScreen() {
   const photosByEvent = useAppStore((s) => s.photosByEvent);
   const loadEventDetail = useAppStore((s) => s.loadEventDetail);
   const subscribeToPhotos = useAppStore((s) => s.subscribeToPhotos);
+  const deleteEvent = useAppStore((s) => s.deleteEvent);
 
   useEffect(() => {
     if (!activeEventId) return;
@@ -66,11 +69,11 @@ export default function HostScreen() {
     return (
       <Screen edges={['top']}>
         <View style={styles.header}>
-          <Text variant="title1">Host</Text>
+          <Text variant="title1">{t('host.emptyHeader')}</Text>
           <IconButton name="close" surface onPress={() => router.back()} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <EmptyState glyph="📊" title="No event yet" subtitle="Host or join an event to see its pulse." />
+          <EmptyState glyph="📊" title={t('host.emptyTitle')} subtitle={t('host.emptyBody')} />
         </View>
       </Screen>
     );
@@ -80,11 +83,32 @@ export default function HostScreen() {
   const isHost = event.hostUid === uid;
   const countdown = getCountdown(event.expiresAt);
 
+  const confirmDelete = () => {
+    Alert.alert(t('host.deleteTitle'), t('host.deleteBody'), [
+      { text: t('host.cancel'), style: 'cancel' },
+      {
+        text: t('host.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            haptics.warning();
+            await deleteEvent(event.id);
+            router.dismissAll();
+            router.replace('/(tabs)');
+          } catch (e) {
+            console.warn('[host] delete failed', e);
+            Alert.alert(t('host.deleteFailed'), t('host.tryAgain'));
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <Screen scroll edges={['top']}>
       <View style={styles.header}>
         <View>
-          <Text variant="title1">Event pulse</Text>
+          <Text variant="title1">{t('host.title')}</Text>
           <Text variant="footnote" dim>
             {event.title}
           </Text>
@@ -97,17 +121,17 @@ export default function HostScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View>
             <Text variant="overline" dim>
-              Invite code
+              {t('host.inviteCode')}
             </Text>
             <Text variant="title2" weight="700" style={{ letterSpacing: 2, color: world.accent }}>
               {event.code}
             </Text>
           </View>
-          {isHost ? <Badge label="You're hosting" icon="⭐" /> : null}
+          {isHost ? <Badge label={t('host.hosting')} icon="⭐" /> : null}
         </View>
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}>
           <Button
-            label="Share"
+            label={t('host.share')}
             size="md"
             icon={<Ionicons name="share-outline" size={18} color={theme.colors.onAccent} />}
             onPress={() =>
@@ -118,7 +142,7 @@ export default function HostScreen() {
             style={{ flex: 1 }}
           />
           <Button
-            label="Copy"
+            label={t('host.copy')}
             size="md"
             variant="secondary"
             onPress={async () => {
@@ -132,9 +156,9 @@ export default function HostScreen() {
 
       {/* Stat tiles */}
       <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
-        <StatTile label="Guests" value={String(stats.members)} icon="people" />
-        <StatTile label="Photos" value={String(stats.photos)} icon="image" />
-        <StatTile label="Days left" value={String(countdown.days)} icon="time" tint={countdown.days <= 3 ? theme.colors.danger : undefined} />
+        <StatTile label={t('host.guests')} value={String(stats.members)} icon="people" />
+        <StatTile label={t('host.photos')} value={String(stats.photos)} icon="image" />
+        <StatTile label={t('host.daysLeft')} value={String(countdown.days)} icon="time" tint={countdown.days <= 3 ? theme.colors.danger : undefined} />
       </View>
 
       {/* Quest completion */}
@@ -142,9 +166,9 @@ export default function HostScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <ProgressRing progress={stats.questPct} size={62} label={`${Math.round(stats.questPct * 100)}%`} color={world.accent} />
           <View style={{ flex: 1 }}>
-            <Text variant="headline">Quests captured</Text>
+            <Text variant="headline">{t('host.questsCaptured')}</Text>
             <Text variant="footnote" dim>
-              {stats.questsDone} of {stats.quests} prompts have at least one photo.
+              {stats.questsDone} / {stats.quests} {t('host.promptsWithPhoto')}
             </Text>
           </View>
         </View>
@@ -152,13 +176,13 @@ export default function HostScreen() {
 
       {/* Leaderboard */}
       <Text variant="overline" dim style={styles.section}>
-        Top contributors
+        {t('host.topContributors')}
       </Text>
       <Card padded={false} style={{ overflow: 'hidden' }}>
         {stats.leaders.length === 0 ? (
           <View style={{ padding: 20 }}>
             <Text variant="footnote" dim align="center">
-              No photos yet — the leaderboard fills as your guests shoot.
+              {t('host.noPhotosYet')}
             </Text>
           </View>
         ) : (
@@ -176,7 +200,7 @@ export default function HostScreen() {
               <Avatar name={l.name} color={l.color} size={34} />
               <Text variant="body" style={{ flex: 1 }}>
                 {l.name}
-                {l.id === uid ? ' (you)' : ''}
+                {l.id === uid ? ` (${t('host.you')})` : ''}
               </Text>
               <Text variant="headline" color={world.accent}>
                 {l.count}
@@ -188,7 +212,7 @@ export default function HostScreen() {
 
       {/* Recent joins */}
       <Text variant="overline" dim style={styles.section}>
-        Who’s here
+        {t('host.whosHere')}
       </Text>
       <Card>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
@@ -196,7 +220,7 @@ export default function HostScreen() {
             <View key={m.uid} style={{ alignItems: 'center', width: 56, gap: 4 }}>
               <Avatar name={m.displayName} color={m.avatarColor} size={44} />
               <Text variant="caption" numberOfLines={1} dim>
-                {m.uid === uid ? 'You' : m.displayName}
+                {m.uid === uid ? t('host.youShort') : m.displayName}
               </Text>
             </View>
           ))}
@@ -204,8 +228,18 @@ export default function HostScreen() {
       </Card>
 
       <Text variant="caption" dim align="center" style={{ marginTop: 20 }}>
-        Everything here vanishes {countdownLabel(countdown).toLowerCase()}. Remind your guests to save what they love.
+        {t('host.vanishesNote')}
       </Text>
+
+      {isHost ? (
+        <Button
+          label={t('host.deleteEvent')}
+          variant="ghost"
+          icon={<Ionicons name="trash-outline" size={18} color={theme.colors.danger} />}
+          onPress={confirmDelete}
+          style={{ marginTop: 12 }}
+        />
+      ) : null}
     </Screen>
   );
 }

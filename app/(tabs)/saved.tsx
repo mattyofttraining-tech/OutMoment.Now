@@ -1,11 +1,14 @@
-import React from 'react';
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useTheme } from '@/theme';
-import { EmptyState, PressableScale, Text } from '@/components/ui';
+import { EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
 
 const COLUMNS = 3;
@@ -13,22 +16,65 @@ const GAP = 3;
 
 export default function SavedScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const saved = useAppStore((s) => s.saved);
   const unsave = useAppStore((s) => s.unsave);
 
   const tile = (Dimensions.get('window').width - GAP * (COLUMNS - 1)) / COLUMNS;
   const exportedCount = saved.filter((s) => s.exportedToDevice).length;
+  const [exporting, setExporting] = useState(false);
+
+  async function exportAll() {
+    if (saved.length === 0 || exporting) return;
+    const perm = await MediaLibrary.requestPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert(t('saved.permTitle'), t('saved.permBody'));
+      return;
+    }
+    setExporting(true);
+    let ok = 0;
+    for (const item of saved) {
+      try {
+        const target = `${FileSystem.cacheDirectory}om_${item.photoId}.jpg`;
+        const { uri } = await FileSystem.downloadAsync(item.url, target);
+        await MediaLibrary.saveToLibraryAsync(uri);
+        ok++;
+      } catch (e) {
+        console.warn('[export] failed', item.photoId, e);
+      }
+    }
+    setExporting(false);
+    if (ok > 0) haptics.success();
+    else haptics.warning();
+    Alert.alert(t('saved.doneTitle'), `${ok} / ${saved.length} ${t('saved.doneToRoll')}`);
+  }
+
+  function onExportPress() {
+    Alert.alert(t('saved.exportTitle'), t('saved.exportPrompt'), [
+      { text: t('saved.cancel'), style: 'cancel' },
+      { text: t('saved.saveToRoll'), onPress: exportAll },
+    ]);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 }}>
-          <Text variant="largeTitle">Saved</Text>
-          <Text variant="footnote" dim>
-            {saved.length === 0
-              ? 'Your keepers live here — forever.'
-              : `${saved.length} kept forever${exportedCount ? ` · ${exportedCount} in your camera roll` : ''}`}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 }}>
+          <View style={{ flex: 1 }}>
+            <Text variant="largeTitle">{t('saved.title')}</Text>
+            <Text variant="footnote" dim>
+              {saved.length === 0
+                ? t('saved.emptyHint')
+                : `${saved.length} ${t('saved.keptForever')}${exportedCount ? ` · ${exportedCount} ${t('saved.inCameraRoll')}` : ''}`}
+            </Text>
+          </View>
+          {saved.length > 0 ? (
+            exporting ? (
+              <ActivityIndicator color={theme.colors.accent} style={{ width: 44 }} />
+            ) : (
+              <IconButton name="download-outline" surface onPress={onExportPress} />
+            )
+          ) : null}
         </View>
 
         <FlatList
@@ -39,11 +85,7 @@ export default function SavedScreen() {
           contentContainerStyle={{ paddingBottom: 140, flexGrow: 1 }}
           ListEmptyComponent={
             <View style={{ flex: 1, justifyContent: 'center', paddingTop: 80 }}>
-              <EmptyState
-                glyph="🤍"
-                title="Your keepers live here"
-                subtitle="Open the Save swipe and keep the photos that matter. What you keep is yours forever — what you don’t is gone at 30 days."
-              />
+              <EmptyState glyph="🤍" title={t('saved.emptyTitle')} subtitle={t('saved.emptyBody')} />
             </View>
           }
           renderItem={({ item, index }) => (

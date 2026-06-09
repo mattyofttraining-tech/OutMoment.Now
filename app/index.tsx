@@ -9,12 +9,14 @@ import { useTheme } from '@/theme';
 import { Button, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { WELCOME_IMAGE } from '@/data/media';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const { height } = Dimensions.get('window');
 
 export default function Welcome() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   const activeEventId = useAppStore((s) => s.activeEventId);
   const hasOnboarded = useAppStore((s) => s.hasOnboarded);
 
@@ -42,23 +44,23 @@ export default function Welcome() {
         <View style={styles.hero}>
           <Animated.View entering={FadeInDown.delay(150).duration(700)}>
             <Text variant="largeTitle" color="#fff" style={{ fontSize: 44, lineHeight: 50 }}>
-              See your day{'\n'}through everyone’s eyes.
+              {t('welcome.heroTitle')}
             </Text>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(300).duration(700)}>
             <Text variant="title3" weight="400" color="rgba(255,255,255,0.78)" style={{ marginTop: 12 }}>
-              Every guest’s photos, pooled into one private gallery. You keep the ones you love — and in 30 days, the rest is gone forever.
+              {t('welcome.heroBody')}
             </Text>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(480).duration(700)} style={{ marginTop: 36, gap: 12 }}>
-            <Button label="I have a code" onPress={() => router.push('/join')} />
-            <Button label="Host my event" variant="secondary" onPress={() => router.push('/(tabs)/store')} />
+            <Button label={t('welcome.haveCode')} onPress={() => router.push('/join')} />
+            <Button label={t('welcome.hostEvent')} variant="secondary" onPress={() => router.push('/(tabs)/store')} />
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(620).duration(700)}>
             <Text variant="footnote" color="rgba(255,255,255,0.5)" align="center" style={{ marginTop: 16 }}>
-              Private by design · No feed · No screenshots of your memories sold
+              {t('welcome.privacy')}
             </Text>
           </Animated.View>
         </View>

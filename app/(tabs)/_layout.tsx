@@ -4,9 +4,11 @@ import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export default function TabsLayout() {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Tabs
@@ -37,28 +39,28 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Moment',
+          title: t('tabs.moment'),
           tabBarIcon: ({ color, size }) => <Ionicons name="sparkles" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="gallery"
         options={{
-          title: 'Gallery',
+          title: t('tabs.gallery'),
           tabBarIcon: ({ color, size }) => <Ionicons name="grid" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="store"
         options={{
-          title: 'Store',
+          title: t('tabs.store'),
           tabBarIcon: ({ color, size }) => <Ionicons name="bag-handle" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="saved"
         options={{
-          title: 'Saved',
+          title: t('tabs.saved'),
           tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
         }}
       />

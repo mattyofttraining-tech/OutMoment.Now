@@ -10,6 +10,7 @@ import { Button, EmptyState, IconButton, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
 import { PhotoGrid } from '@/features/gallery/PhotoGrid';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/i18n/useTranslation';
 import type { Photo } from '@/types';
 import { exportPhotoToLibrary } from '@/services/media';
 import { haptics } from '@/utils/haptics';
@@ -17,6 +18,7 @@ import { haptics } from '@/utils/haptics';
 export default function GalleryScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const activeEventId = useAppStore((s) => s.activeEventId);
   const myEvents = useAppStore((s) => s.myEvents);
@@ -38,7 +40,7 @@ export default function GalleryScreen() {
   if (!event) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
-        <EmptyState glyph="🖼️" title="No gallery yet" subtitle="Join or host an event to see the shared photos here." />
+        <EmptyState glyph="🖼️" title={t('gallery.noGalleryTitle')} subtitle={t('gallery.noGalleryBody')} />
       </SafeAreaView>
     );
   }
@@ -62,14 +64,14 @@ export default function GalleryScreen() {
         <View>
           <Text variant="largeTitle">{event.title}</Text>
           <Text variant="footnote" dim>
-            {photos.length} {photos.length === 1 ? 'photo' : 'photos'} · everyone’s view
+            {photos.length} {t('gallery.photosLabel')}
           </Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 }}>
         <CountdownBadge expiresAt={event.expiresAt} />
         <View style={{ flex: 1 }} />
-        <Button label="Save photos" size="sm" fullWidth={false} icon={<Ionicons name="albums-outline" size={16} color={theme.colors.onAccent} />} onPress={() => router.push('/swipe')} />
+        <Button label={t('gallery.savePhotos')} size="sm" fullWidth={false} icon={<Ionicons name="albums-outline" size={16} color={theme.colors.onAccent} />} onPress={() => router.push('/swipe')} />
       </View>
     </View>
   );
@@ -83,7 +85,7 @@ export default function GalleryScreen() {
           onPressPhoto={(p) => setViewer(p)}
           ListHeaderComponent={header}
           ListEmptyComponent={
-            <EmptyState glyph="📸" title="Be the first" subtitle="The gallery fills up as the day unfolds. Tap Capture and start the story." />
+            <EmptyState glyph="📸" title={t('gallery.beFirstTitle')} subtitle={t('gallery.beFirstBody')} />
           }
         />
       </SafeAreaView>

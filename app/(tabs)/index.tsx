@@ -11,11 +11,13 @@ import { QuestCard } from '@/features/quests/QuestCard';
 import { useAppStore } from '@/store/useAppStore';
 import { getWorld } from '@/data/eventWorlds';
 import { getCountdown, isUrgent } from '@/utils/time';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export default function MomentScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { setAccent } = useThemeControls();
+  const { t } = useTranslation();
 
   const uid = useAppStore((s) => s.uid);
   const activeEventId = useAppStore((s) => s.activeEventId);
@@ -45,14 +47,10 @@ export default function MomentScreen() {
   if (!event) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
-        <EmptyState
-          glyph="✨"
-          title="Your moment starts here"
-          subtitle="Got a code from a host? Jump in. Hosting your own day? Set it up in 60 seconds and hand out the code."
-        >
+        <EmptyState glyph="✨" title={t('home.emptyTitle')} subtitle={t('home.emptyBody')}>
           <View style={{ gap: 10 }}>
-            <Button label="Enter event code" onPress={() => router.push('/join')} />
-            <Button label="Host an event" variant="secondary" onPress={() => router.push('/(tabs)/store')} />
+            <Button label={t('home.enterCode')} onPress={() => router.push('/join')} />
+            <Button label={t('home.hostEvent')} variant="secondary" onPress={() => router.push('/(tabs)/store')} />
           </View>
         </EmptyState>
       </SafeAreaView>
@@ -89,20 +87,20 @@ export default function MomentScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <Ionicons name="time" size={26} color={theme.colors.danger} />
                 <View style={{ flex: 1 }}>
-                  <Text variant="headline">Time to save your moment</Text>
+                  <Text variant="headline">{t('home.urgentTitle')}</Text>
                   <Text variant="footnote" dim>
-                    Swipe through every photo and keep what matters before it’s gone.
+                    {t('home.urgentBody')}
                   </Text>
                 </View>
               </View>
-              <Button label="Start saving" onPress={() => router.push('/swipe')} style={{ marginTop: 12 }} />
+              <Button label={t('home.startSaving')} onPress={() => router.push('/swipe')} style={{ marginTop: 12 }} />
             </Card>
           ) : null}
 
           {/* Primary actions */}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-            <Button label="Capture" icon={<Ionicons name="camera" size={20} color={theme.colors.onAccent} />} onPress={() => router.push('/capture')} style={{ flex: 1 }} />
-            <Button label="Save" variant="secondary" icon={<Ionicons name="albums-outline" size={20} color={theme.colors.text} />} onPress={() => router.push('/swipe')} style={{ flex: 1 }} />
+            <Button label={t('home.capture')} icon={<Ionicons name="camera" size={20} color={theme.colors.onAccent} />} onPress={() => router.push('/capture')} style={{ flex: 1 }} />
+            <Button label={t('home.save')} variant="secondary" icon={<Ionicons name="albums-outline" size={20} color={theme.colors.text} />} onPress={() => router.push('/swipe')} style={{ flex: 1 }} />
           </View>
 
           {/* Quests */}
@@ -111,11 +109,11 @@ export default function MomentScreen() {
               <ProgressRing progress={progress} size={56} label={`${myCompleted}`} sublabel={`/${quests.length}`} />
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text variant="title3">Quests</Text>
-                  {progress >= 1 ? <Badge label="Complete" icon="✨" /> : null}
+                  <Text variant="title3">{t('home.quests')}</Text>
+                  {progress >= 1 ? <Badge label={t('home.complete')} icon="✨" /> : null}
                 </View>
                 <Text variant="footnote" dim>
-                  {questMilestone(progress)}
+                  {t(questMilestone(progress))}
                 </Text>
               </View>
             </View>
@@ -133,7 +131,7 @@ export default function MomentScreen() {
             {quests.length > 4 ? (
               <PressableScale onPress={() => router.push('/(tabs)/gallery')} style={{ paddingVertical: 10, alignItems: 'center' }}>
                 <Text variant="subhead" color={theme.colors.accent}>
-                  See all {quests.length} quests
+                  {t('home.seeAllQuests')}
                 </Text>
               </PressableScale>
             ) : null}
@@ -143,10 +141,10 @@ export default function MomentScreen() {
           {photos.length > 0 ? (
             <View style={{ marginTop: 24 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text variant="title3">Latest</Text>
+                <Text variant="title3">{t('home.latest')}</Text>
                 <PressableScale onPress={() => router.push('/(tabs)/gallery')}>
                   <Text variant="subhead" color={theme.colors.accent}>
-                    Gallery
+                    {t('home.gallery')}
                   </Text>
                 </PressableScale>
               </View>
@@ -170,8 +168,8 @@ export default function MomentScreen() {
 }
 
 function questMilestone(progress: number): string {
-  if (progress >= 1) return 'All done — you captured it all ✨';
-  if (progress >= 0.5) return 'Over halfway — keep them coming';
-  if (progress > 0) return 'You’re off to a great start';
-  return 'Little nudges to capture it all';
+  if (progress >= 1) return 'home.milestoneAllDone';
+  if (progress >= 0.5) return 'home.milestoneHalf';
+  if (progress > 0) return 'home.milestoneStart';
+  return 'home.milestoneNudge';
 }
