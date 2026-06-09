@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {
   EventMember,
   OurEvent,
@@ -8,11 +9,14 @@ import type {
 } from '@/types';
 import { getDataService, type CreateEventInput } from '@/services';
 
+const ONBOARDED_KEY = 'ourmoment.onboarded.v1';
+
 interface AppState {
   ready: boolean;
   isDemo: boolean;
   uid: string | null;
   displayName: string;
+  hasOnboarded: boolean;
 
   myEvents: OurEvent[];
   activeEventId: string | null;
@@ -43,6 +47,7 @@ interface AppState {
   unsave: (photoId: string) => Promise<void>;
 
   setDisplayName: (name: string) => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -50,6 +55,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isDemo: getDataService().isDemo,
   uid: null,
   displayName: 'You',
+  hasOnboarded: false,
 
   myEvents: [],
   activeEventId: null,
@@ -63,17 +69,26 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async bootstrap() {
     const svc = getDataService();
-    const user = await svc.ensureAuth();
+    const [user, onboardedRaw] = await Promise.all([
+      svc.ensureAuth(),
+      AsyncStorage.getItem(ONBOARDED_KEY).catch(() => null),
+    ]);
     const [events, saved] = await Promise.all([svc.getMyEvents(), svc.getSavedPhotos()]);
     set({
       ready: true,
       uid: user.uid,
       displayName: user.displayName ?? get().displayName,
+      hasOnboarded: onboardedRaw === 'true',
       myEvents: events,
       activeEventId: events[0]?.id ?? get().activeEventId,
       saved,
       savedIds: new Set(saved.map((s) => s.photoId)),
     });
+  },
+
+  async completeOnboarding() {
+    set({ hasOnboarded: true });
+    await AsyncStorage.setItem(ONBOARDED_KEY, 'true').catch(() => {});
   },
 
   async refreshMyEvents() {

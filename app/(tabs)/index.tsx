@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, useThemeControls } from '@/theme';
-import { Button, Card, EmptyState, IconButton, PressableScale, ProgressRing, Text } from '@/components/ui';
+import { Badge, Button, Card, EmptyState, IconButton, PressableScale, ProgressRing, Text } from '@/components/ui';
 import { EventHero } from '@/features/event/EventHero';
 import { QuestCard } from '@/features/quests/QuestCard';
 import { useAppStore } from '@/store/useAppStore';
@@ -74,7 +74,10 @@ export default function MomentScreen() {
           <Text variant="overline" dim>
             OURMOMENT
           </Text>
-          <IconButton name="person-circle-outline" onPress={() => router.push('/settings')} surface />
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <IconButton name="stats-chart" onPress={() => router.push('/host')} surface />
+            <IconButton name="person-circle-outline" onPress={() => router.push('/settings')} surface />
+          </View>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 140 }}>
@@ -106,10 +109,13 @@ export default function MomentScreen() {
           <View style={{ marginTop: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <ProgressRing progress={progress} size={56} label={`${myCompleted}`} sublabel={`/${quests.length}`} />
-              <View>
-                <Text variant="title3">Quests</Text>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text variant="title3">Quests</Text>
+                  {progress >= 1 ? <Badge label="Complete" icon="✨" /> : null}
+                </View>
                 <Text variant="footnote" dim>
-                  {progress >= 1 ? 'All done — beautiful work' : 'Little nudges to capture it all'}
+                  {questMilestone(progress)}
                 </Text>
               </View>
             </View>
@@ -161,4 +167,11 @@ export default function MomentScreen() {
       </SafeAreaView>
     </View>
   );
+}
+
+function questMilestone(progress: number): string {
+  if (progress >= 1) return 'All done — you captured it all ✨';
+  if (progress >= 0.5) return 'Over halfway — keep them coming';
+  if (progress > 0) return 'You’re off to a great start';
+  return 'Little nudges to capture it all';
 }

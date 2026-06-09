@@ -27,9 +27,11 @@ function RootStack() {
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="join" options={{ presentation: 'modal' }} />
       <Stack.Screen name="events" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="host" options={{ presentation: 'modal' }} />
       <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
       <Stack.Screen name="book/[type]" options={{ presentation: 'modal' }} />
       <Stack.Screen

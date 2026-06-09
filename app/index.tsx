@@ -16,7 +16,10 @@ export default function Welcome() {
   const theme = useTheme();
   const router = useRouter();
   const activeEventId = useAppStore((s) => s.activeEventId);
+  const hasOnboarded = useAppStore((s) => s.hasOnboarded);
 
+  // First run: show the intro that sells the "save it or lose it" magic.
+  if (!hasOnboarded) return <Redirect href="/onboarding" />;
   // Returning guest with a live event lands straight inside it.
   if (activeEventId) return <Redirect href="/(tabs)" />;
 
