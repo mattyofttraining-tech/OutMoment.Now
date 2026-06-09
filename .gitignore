@@ -37,6 +37,8 @@ google-services.json
 GoogleService-Info.plist
 functions/.env
 functions/lib/
+functions/scripts/serviceAccount.json
+functions/scripts/.webhook-secret.tmp
 .firebase/
 firebase-debug.log
 firestore-debug.log

@@ -437,6 +437,12 @@ export const purgeExpiredEvents = onSchedule(
 
     for (const doc of expired.docs) {
       const eventId = doc.id;
+      // Always-on events (e.g. the Ad Mariage marketing event) are never purged,
+      // even if their expiry somehow lapses during a refresh outage.
+      if (doc.data().neverPurge === true) {
+        logger.info(`Purge: skipping never-purge event ${eventId}.`);
+        continue;
+      }
       try {
         // 1. Hard-delete all photos in object storage for this event.
         await bucket.deleteFiles({ prefix: `events/${eventId}/` });
@@ -450,6 +456,28 @@ export const purgeExpiredEvents = onSchedule(
     }
 
     logger.info(`Purge complete. Removed ${deleted}/${expired.size} expired events.`);
+  },
+);
+
+/**
+ * Keep "always-on" events alive. Any event flagged `neverPurge: true` (the Ad
+ * Mariage marketing event) gets its expiry pushed back to ~26 days out every
+ * day. Two effects: it never falls into the purge window, and its prominent
+ * countdown badge always reads a believable number for marketing footage.
+ */
+export const refreshAdEvents = onSchedule(
+  { schedule: 'every 24 hours', timeZone: 'UTC' },
+  async () => {
+    const snap = await db.collection('events').where('neverPurge', '==', true).get();
+    if (snap.empty) {
+      logger.info('refreshAdEvents: no always-on events.');
+      return;
+    }
+    const expiresAt = Date.now() + 26 * 24 * 60 * 60 * 1000;
+    const batch = db.batch();
+    snap.docs.forEach((d) => batch.update(d.ref, { expiresAt }));
+    await batch.commit();
+    logger.info(`refreshAdEvents: refreshed ${snap.size} always-on event(s) to ${new Date(expiresAt).toISOString()}.`);
   },
 );
 
