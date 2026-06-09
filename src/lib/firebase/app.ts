@@ -61,7 +61,7 @@ export function getFirebaseStorage(): FirebaseStorage {
 
 export function getFirebaseFunctions(): Functions {
   if (_functions) return _functions;
-  _functions = getFunctions(ensureApp());
+  _functions = getFunctions(ensureApp(), 'europe-west1');
   if (useEmulator) connectFunctionsEmulator(_functions, '127.0.0.1', 5001);
   return _functions;
 }

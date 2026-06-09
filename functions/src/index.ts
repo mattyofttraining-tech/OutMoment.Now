@@ -4,6 +4,7 @@ import { getStorage } from 'firebase-admin/storage';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
+import { setGlobalOptions } from 'firebase-functions/v2';
 import { logger } from 'firebase-functions';
 import { QUEST_PACKS, makeJoinCode, coverFor } from './questPacks';
 import { generateQuestsWithAI } from './quests';
@@ -11,6 +12,9 @@ import { priceCents, type GuestTierId } from './pricing';
 
 initializeApp();
 const db = getFirestore();
+
+// All functions deploy to the EU to match Firestore (eur3) / Storage residency.
+setGlobalOptions({ region: 'europe-west1', maxInstances: 10 });
 
 const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
 const STRIPE_SECRET_KEY = defineSecret('STRIPE_SECRET_KEY');
