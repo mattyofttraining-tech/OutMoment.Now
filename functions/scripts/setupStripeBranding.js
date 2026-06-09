@@ -22,8 +22,9 @@ const { GoogleAuth } = require(path.join(__dirname, '..', 'node_modules', 'googl
 
 const PROJECT_ID = 'ourmoment-prod';
 const BRAND_DIR = 'C:/Users/Matty/Desktop/OurMoment-Brand';
-const ICON_PNG = path.join(BRAND_DIR, 'ourmoment-icon-fullbleed-1024.png');
-const LOGO_PNG = path.join(BRAND_DIR, 'ourmoment-lockup-transparent.png');
+// Stripe rejects branding files over 512 kB — these are pre-resized copies.
+const ICON_PNG = path.join(BRAND_DIR, 'stripe', 'icon-512.png');
+const LOGO_PNG = path.join(BRAND_DIR, 'stripe', 'lockup-720.png');
 const PRIMARY_COLOR = '#EC8D65'; // brand color (page background tint)
 const SECONDARY_COLOR = '#A3564A'; // accent color (pay button)
 
