@@ -82,6 +82,19 @@ export class DemoDataService implements DataService {
     return event;
   }
 
+  async deleteEvent(eventId: string): Promise<void> {
+    this.events = this.events.filter((e) => e.id !== eventId);
+    delete this.photosByEvent[eventId];
+    delete this.questsByEvent[eventId];
+    delete this.membersByEvent[eventId];
+    delete this.listeners[eventId];
+  }
+
+  async leaveEvent(eventId: string): Promise<void> {
+    // In demo mode leaving just drops the event from this session.
+    await this.deleteEvent(eventId);
+  }
+
   async getMyEvents(): Promise<OurEvent[]> {
     return [...this.events];
   }

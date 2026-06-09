@@ -96,6 +96,22 @@ export class FirebaseDataService implements DataService {
     return data.event;
   }
 
+  async deleteEvent(eventId: string): Promise<void> {
+    const callable = httpsCallable<{ eventId: string }, { deleted: boolean }>(
+      getFirebaseFunctions(),
+      'deleteEvent',
+    );
+    await callable({ eventId });
+  }
+
+  async leaveEvent(eventId: string): Promise<void> {
+    const callable = httpsCallable<{ eventId: string }, { left: boolean }>(
+      getFirebaseFunctions(),
+      'leaveEvent',
+    );
+    await callable({ eventId });
+  }
+
   async getMyEvents(): Promise<OurEvent[]> {
     const uid = this.currentUser().uid;
     const q = query(
@@ -135,11 +151,21 @@ export class FirebaseDataService implements DataService {
 
   async uploadPhoto(eventId: string, localUri: string, questId?: string | null): Promise<Photo> {
     const user = this.currentUser();
+    console.log('[upload] uid=', user.uid, 'event=', eventId);
     const id = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const storagePath = `events/${eventId}/photos/${id}.jpg`;
 
-    // Read the local file into a blob and upload to per-event storage.
-    const blob = await (await fetch(localUri)).blob();
+    // React Native can't build a Blob from raw bytes (uploadBytes/uploadString
+    // throw "Creating blobs from 'ArrayBuffer'…"). The reliable path is to pull a
+    // real Blob from the local file via XMLHttpRequest, then upload that.
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => resolve(xhr.response as Blob);
+      xhr.onerror = () => reject(new Error('Could not read the captured photo.'));
+      xhr.responseType = 'blob';
+      xhr.open('GET', localUri, true);
+      xhr.send(null);
+    });
     const storageRef = ref(getFirebaseStorage(), storagePath);
     await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
     const url = await getDownloadURL(storageRef);

@@ -44,6 +44,10 @@ export interface DataService {
   joinEventByCode(code: string, displayName: string): Promise<OurEvent>;
   /** Host-side: create an event and receive its code (used by the store). */
   createEvent(input: CreateEventInput): Promise<OurEvent>;
+  /** Host-only: permanently delete an event and all its photos/quests/members. */
+  deleteEvent(eventId: string): Promise<void>;
+  /** Guest: remove yourself from an event (hosts delete instead). */
+  leaveEvent(eventId: string): Promise<void>;
 
   getMyEvents(): Promise<OurEvent[]>;
   getEvent(eventId: string): Promise<OurEvent | null>;
