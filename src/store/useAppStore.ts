@@ -69,21 +69,38 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async bootstrap() {
     const svc = getDataService();
-    const [user, onboardedRaw] = await Promise.all([
-      svc.ensureAuth(),
-      AsyncStorage.getItem(ONBOARDED_KEY).catch(() => null),
-    ]);
-    const [events, saved] = await Promise.all([svc.getMyEvents(), svc.getSavedPhotos()]);
-    set({
-      ready: true,
-      uid: user.uid,
-      displayName: user.displayName ?? get().displayName,
-      hasOnboarded: onboardedRaw === 'true',
-      myEvents: events,
-      activeEventId: events[0]?.id ?? get().activeEventId,
-      saved,
-      savedIds: new Set(saved.map((s) => s.photoId)),
-    });
+    try {
+      const [user, onboardedRaw] = await Promise.all([
+        svc.ensureAuth(),
+        AsyncStorage.getItem(ONBOARDED_KEY).catch(() => null),
+      ]);
+      // Data fetches are non-fatal: a backend hiccup (e.g. a still-building
+      // index) must never block app launch. Come up empty and refresh later.
+      const [events, saved] = await Promise.all([
+        svc.getMyEvents().catch((e) => {
+          console.warn('bootstrap: getMyEvents failed', e);
+          return [] as OurEvent[];
+        }),
+        svc.getSavedPhotos().catch((e) => {
+          console.warn('bootstrap: getSavedPhotos failed', e);
+          return [] as SavedPhoto[];
+        }),
+      ]);
+      set({
+        ready: true,
+        uid: user.uid,
+        displayName: user.displayName ?? get().displayName,
+        hasOnboarded: onboardedRaw === 'true',
+        myEvents: events,
+        activeEventId: events[0]?.id ?? get().activeEventId,
+        saved,
+        savedIds: new Set(saved.map((s) => s.photoId)),
+      });
+    } catch (e) {
+      // Even auth/storage failure must not strand the splash screen forever.
+      console.warn('bootstrap: auth/storage failed', e);
+      set({ ready: true });
+    }
   },
 
   async completeOnboarding() {
