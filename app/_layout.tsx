@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
@@ -34,6 +35,7 @@ function RootStack() {
       <Stack.Screen name="host" options={{ presentation: 'modal' }} />
       <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
       <Stack.Screen name="book/[type]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="checkout-complete" options={{ animation: 'fade' }} />
       <Stack.Screen
         name="capture"
         options={{ presentation: 'fullScreenModal', animation: 'fade' }}
@@ -63,6 +65,16 @@ export default function RootLayout() {
   useEffect(() => {
     bootstrap().catch((err) => console.warn('Bootstrap failed:', err));
   }, [bootstrap]);
+
+  // PWA: register the service worker (web only, production origins only —
+  // localhost dev servers don't serve /sw.js and a stale worker breaks HMR).
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof navigator === 'undefined') return;
+    if (!('serviceWorker' in navigator) || process.env.NODE_ENV !== 'production') return;
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('Service worker registration failed:', err);
+    });
+  }, []);
 
   useEffect(() => {
     if (fontsReady && ready) SplashScreen.hideAsync().catch(() => {});
