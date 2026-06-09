@@ -62,8 +62,8 @@ export function priceCents(type: EventType, tierId: GuestTierId): number {
   return priceFor(type, tierId) * 100;
 }
 
-export function formatPrice(amount: number, currency = '$'): string {
-  return `${currency}${amount.toLocaleString('en-US')}`;
+export function formatPrice(amount: number, currency = '€'): string {
+  return `${currency}${amount.toLocaleString('en-IE')}`;
 }
 
 /** The "from $X" label shown on store cards (smallest tier). */

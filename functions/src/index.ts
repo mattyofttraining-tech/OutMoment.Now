@@ -212,7 +212,7 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
       {
         quantity: 1,
         price_data: {
-          currency: 'usd',
+          currency: 'eur',
           unit_amount: amount,
           product_data: { name: `OurMoment — ${title || 'Event'} (${tier})` },
         },
