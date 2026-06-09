@@ -151,9 +151,11 @@ export class FirebaseDataService implements DataService {
 
   async uploadPhoto(eventId: string, localUri: string, questId?: string | null): Promise<Photo> {
     const user = this.currentUser();
-    console.log('[upload] uid=', user.uid, 'event=', eventId);
     const id = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    const storagePath = `events/${eventId}/photos/${id}.jpg`;
+    // uid-scoped path so Storage rules can enforce that users only write their
+    // own objects (see storage.rules). Purge/delete still works: it removes by
+    // the events/{eventId}/ prefix.
+    const storagePath = `events/${eventId}/photos/${user.uid}/${id}.jpg`;
 
     // React Native can't build a Blob from raw bytes (uploadBytes/uploadString
     // throw "Creating blobs from 'ArrayBuffer'…"). The reliable path is to pull a
