@@ -18,6 +18,8 @@ export interface CreateEventInput {
   aiBrief?: string;
   /** Guest-capacity tier chosen at booking (drives price). */
   guestTier?: GuestTierId;
+  /** Stripe Checkout session that paid for this booking (verified server-side). */
+  checkoutSessionId?: string;
 }
 
 export interface AuthUser {

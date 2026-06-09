@@ -14,7 +14,7 @@ import { GUEST_TIERS, formatPrice, priceFor } from '@/data/pricing';
 import type { EventType, GuestTierId, OurEvent } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
-import { startCheckout } from '@/services/payments';
+import { savePendingBooking, startCheckout } from '@/services/payments';
 import { haptics } from '@/utils/haptics';
 import { PressableScale } from '@/components/ui';
 
@@ -43,9 +43,19 @@ export default function BookScreen() {
     if (!canBook || loading) return;
     setLoading(true);
     try {
-      console.log('[book] starting checkout', { type: world.type, guestTier });
+      if (Platform.OS === 'web') {
+        // The web PWA leaves the page to pay — stash the booking so
+        // /checkout-complete can resume it after Stripe redirects back.
+        await savePendingBooking({
+          type: world.type,
+          title: title.trim(),
+          subtitle: subtitle.trim() || undefined,
+          brief: world.aiPowered ? brief.trim() : undefined,
+          guestTier,
+        });
+      }
       const checkout = await startCheckout(world.type, title.trim(), guestTier);
-      console.log('[book] checkout result', checkout);
+      if (checkout.status === 'redirecting') return; // page is navigating to Stripe
       if (checkout.status === 'cancelled') {
         setLoading(false);
         return;
@@ -58,6 +68,7 @@ export default function BookScreen() {
         startsAt: Date.now(),
         aiBrief: world.aiPowered ? brief.trim() : undefined,
         guestTier,
+        checkoutSessionId: checkout.status === 'paid' ? checkout.sessionId : undefined,
       });
       haptics.success();
       setCreated(event);

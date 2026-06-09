@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as WebBrowser from 'expo-web-browser';
 import { httpsCallable } from 'firebase/functions';
 import { getFirebaseFunctions } from '@/lib/firebase/app';
@@ -14,16 +16,24 @@ import type { EventType, GuestTierId } from '@/types';
  *
  * Flow in production:
  *   1. Call the `createCheckoutSession` Cloud Function → returns a Stripe
- *      Checkout URL.
- *   2. Open it in an in-app browser session.
- *   3. On return, the function's webhook has marked the order paid; the app
- *      then calls createEvent.
+ *      Checkout URL + session id.
+ *   2. Native: open it in an in-app browser session; Stripe redirects back to
+ *      `ourmoment://checkout-complete?session_id=…`.
+ *      Web: persist the booking draft, then navigate the page to Checkout;
+ *      Stripe redirects back to `/checkout-complete`, which resumes creation.
+ *   3. The app calls createEvent with the session id. The server retrieves the
+ *      session from Stripe and only creates the event if it is genuinely paid,
+ *      belongs to this user, and has never been consumed. The redirect itself
+ *      is never trusted.
  *
  * In demo mode this resolves instantly so the booking flow is fully explorable.
  */
-export interface CheckoutResult {
-  status: 'paid' | 'cancelled' | 'demo';
-}
+export type CheckoutResult =
+  | { status: 'paid'; sessionId: string }
+  | { status: 'demo' }
+  | { status: 'cancelled' }
+  /** Web only: the page is navigating to Stripe; nothing more happens here. */
+  | { status: 'redirecting' };
 
 export async function startCheckout(
   eventType: EventType,
@@ -37,12 +47,63 @@ export async function startCheckout(
   }
 
   const callable = httpsCallable<
-    { eventType: EventType; title: string; guestTier: GuestTierId },
-    { url: string }
+    {
+      eventType: EventType;
+      title: string;
+      guestTier: GuestTierId;
+      platform: 'web' | 'native';
+      webOrigin?: string;
+    },
+    { url: string; sessionId: string }
   >(getFirebaseFunctions(), 'createCheckoutSession');
-  const { data } = await callable({ eventType, title, guestTier });
 
+  if (Platform.OS === 'web') {
+    const { data } = await callable({
+      eventType,
+      title,
+      guestTier,
+      platform: 'web',
+      webOrigin: window.location.origin,
+    });
+    // Full-page navigation — an in-app browser session can't return to a PWA.
+    window.location.assign(data.url);
+    return { status: 'redirecting' };
+  }
+
+  const { data } = await callable({ eventType, title, guestTier, platform: 'native' });
   const result = await WebBrowser.openAuthSessionAsync(data.url, 'ourmoment://checkout-complete');
-  if (result.type === 'success') return { status: 'paid' };
+  if (result.type === 'success') {
+    const sessionId = new URL(result.url).searchParams.get('session_id') ?? data.sessionId;
+    return { status: 'paid', sessionId };
+  }
   return { status: 'cancelled' };
+}
+
+// ── Web booking draft ────────────────────────────────────────────────────────
+// The PWA leaves the page to pay, so the booking form is stashed here and
+// picked back up by app/checkout-complete.tsx after Stripe redirects home.
+
+export interface PendingBooking {
+  type: EventType;
+  title: string;
+  subtitle?: string;
+  brief?: string;
+  guestTier: GuestTierId;
+}
+
+const PENDING_KEY = 'ourmoment.pendingBooking';
+
+export async function savePendingBooking(booking: PendingBooking): Promise<void> {
+  await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(booking));
+}
+
+export async function takePendingBooking(): Promise<PendingBooking | null> {
+  const raw = await AsyncStorage.getItem(PENDING_KEY);
+  if (!raw) return null;
+  await AsyncStorage.removeItem(PENDING_KEY);
+  try {
+    return JSON.parse(raw) as PendingBooking;
+  } catch {
+    return null;
+  }
 }

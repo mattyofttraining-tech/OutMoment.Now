@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
-import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { onCall, onRequest, HttpsError } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import { setGlobalOptions } from 'firebase-functions/v2';
@@ -18,6 +18,20 @@ setGlobalOptions({ region: 'europe-west1', maxInstances: 10 });
 
 const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
 const STRIPE_SECRET_KEY = defineSecret('STRIPE_SECRET_KEY');
+const STRIPE_WEBHOOK_SECRET = defineSecret('STRIPE_WEBHOOK_SECRET');
+
+/** Origins allowed to receive the Checkout redirect on web. */
+const WEB_ORIGINS = [
+  'https://ourmoment-prod.web.app',
+  'https://ourmoment.store',
+  'https://www.ourmoment.store',
+];
+
+async function getStripe(key: string) {
+  // Lazy-import so functions only pull Stripe when actually configured.
+  const Stripe = (await import('stripe')).default;
+  return new Stripe(key);
+}
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_EVENT_AGE_DAYS = 30;
@@ -30,12 +44,16 @@ interface CreateEventData {
   startsAt: number;
   aiBrief?: string;
   guestTier?: GuestTierId;
+  /** Stripe Checkout session that paid for this booking. */
+  checkoutSessionId?: string;
 }
 
 const VALID_TYPES = ['marriage', 'confirmation', 'baptism', 'birthday', 'special'];
 
 /** Create an event, generate a unique code + quest pack, return the event. */
-export const createEvent = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (request) => {
+export const createEvent = onCall(
+  { secrets: [ANTHROPIC_API_KEY, STRIPE_SECRET_KEY] },
+  async (request) => {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Sign in to host an event.');
 
@@ -45,6 +63,13 @@ export const createEvent = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (reque
   }
   const type = VALID_TYPES.includes(data.type) ? data.type : 'special';
   const now = Date.now();
+
+  // Payment gate: when Stripe is configured, an event can only be created
+  // from a paid, unconsumed Checkout session for this exact uid/type/tier.
+  // The browser redirect is never trusted (see stripeWebhook docs above).
+  if (STRIPE_SECRET_KEY.value()) {
+    await verifyAndConsumePayment(uid, data.checkoutSessionId, type, data.guestTier || 'intimate');
+  }
 
   // Generate a unique join code (retry on the rare collision).
   let code = '';
@@ -106,6 +131,15 @@ export const createEvent = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (reque
     });
   });
   await batch.commit();
+
+  // Close the audit loop: link the payment to the event it bought.
+  if (data.checkoutSessionId) {
+    await db
+      .collection('payments')
+      .doc(data.checkoutSessionId)
+      .set({ eventId: eventRef.id }, { merge: true })
+      .catch((err) => logger.warn('Could not link payment to event.', err));
+  }
 
   return { event: { id: eventRef.id, ...event } };
 });
@@ -182,16 +216,23 @@ interface CheckoutData {
   eventType: string;
   title: string;
   guestTier?: GuestTierId;
+  /** 'web' redirects back to the PWA origin; anything else uses the app scheme. */
+  platform?: 'web' | 'native';
+  /** The PWA's origin (validated against WEB_ORIGINS). */
+  webOrigin?: string;
 }
 
 /**
  * Create a Stripe Checkout session for a booking. Price scales with the chosen
  * guest-capacity tier. Booking is a real-world service (generally IAP-exempt) —
  * confirm against App Store guidelines.
+ *
+ * Payment is verified server-side in createEvent (session retrieval + single
+ * use); the redirect back to the app is purely UX.
  */
 export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, async (request) => {
   if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in first.');
-  const { eventType, title, guestTier } = request.data as CheckoutData;
+  const { eventType, title, guestTier, platform, webOrigin } = request.data as CheckoutData;
 
   const key = STRIPE_SECRET_KEY.value();
   if (!key) {
@@ -201,13 +242,21 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
   const tier: GuestTierId = guestTier || 'intimate';
   const amount = priceCents(eventType, tier);
 
-  // Lazy-import so the function only pulls Stripe when actually configured.
-  const Stripe = (await import('stripe')).default;
-  const stripe = new Stripe(key);
+  // Where Checkout sends the user afterwards. {CHECKOUT_SESSION_ID} is
+  // substituted by Stripe so the app can verify the exact session it paid for.
+  let returnBase = 'ourmoment://checkout-complete';
+  if (platform === 'web') {
+    if (!webOrigin || !WEB_ORIGINS.includes(webOrigin)) {
+      throw new HttpsError('invalid-argument', 'Unrecognized web origin.');
+    }
+    returnBase = `${webOrigin}/checkout-complete`;
+  }
+
+  const stripe = await getStripe(key);
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    success_url: 'ourmoment://checkout-complete?status=success',
-    cancel_url: 'ourmoment://checkout-complete?status=cancel',
+    success_url: `${returnBase}?status=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${returnBase}?status=cancel`,
     line_items: [
       {
         quantity: 1,
@@ -218,11 +267,107 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
         },
       },
     ],
+    payment_intent_data: { statement_descriptor: 'OURMOMENT' },
     metadata: { uid: request.auth.uid, eventType, guestTier: tier },
   });
 
-  return { url: session.url };
+  return { url: session.url, sessionId: session.id };
 });
+
+/**
+ * Stripe webhook — the durable record of what was actually paid.
+ * Signature-verified; writes payments/{sessionId} so payments remain auditable
+ * and reconcilable even if the client dies right after paying. createEvent
+ * independently verifies the session against the Stripe API before creating
+ * anything, so a forged client cannot skip payment either way.
+ *
+ * Setup: add an endpoint for this function's URL in the Stripe dashboard
+ * (event: checkout.session.completed) and store its signing secret as the
+ * STRIPE_WEBHOOK_SECRET function secret.
+ */
+export const stripeWebhook = onRequest(
+  { secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET] },
+  async (req, res) => {
+    const key = STRIPE_SECRET_KEY.value();
+    const whSecret = STRIPE_WEBHOOK_SECRET.value();
+    const signature = req.headers['stripe-signature'];
+    if (!key || !whSecret || !signature) {
+      res.status(400).send('Webhook not configured.');
+      return;
+    }
+
+    const stripe = await getStripe(key);
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(req.rawBody, signature, whSecret);
+    } catch (err) {
+      logger.warn('Webhook signature verification failed.', err);
+      res.status(400).send('Invalid signature.');
+      return;
+    }
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      await db.collection('payments').doc(session.id).set(
+        {
+          status: session.payment_status,
+          uid: session.metadata?.uid ?? null,
+          eventType: session.metadata?.eventType ?? null,
+          guestTier: session.metadata?.guestTier ?? null,
+          amountTotal: session.amount_total,
+          currency: session.currency,
+          paidAt: Date.now(),
+        },
+        { merge: true },
+      );
+      logger.info(`Payment recorded for session ${session.id}.`);
+    }
+
+    res.status(200).send('ok');
+  },
+);
+
+/**
+ * Verify a Checkout session is genuinely paid, belongs to this user, matches
+ * what they're trying to create, and has never been used before. Marks it
+ * consumed atomically so one payment buys exactly one event.
+ */
+async function verifyAndConsumePayment(
+  uid: string,
+  sessionId: string | undefined,
+  eventType: string,
+  tier: GuestTierId,
+): Promise<void> {
+  if (!sessionId) {
+    throw new HttpsError('failed-precondition', 'Payment required before creating an event.');
+  }
+
+  const stripe = await getStripe(STRIPE_SECRET_KEY.value());
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (session.payment_status !== 'paid') {
+    throw new HttpsError('failed-precondition', 'This booking has not been paid.');
+  }
+  if (session.metadata?.uid !== uid) {
+    throw new HttpsError('permission-denied', 'This payment belongs to a different user.');
+  }
+  if (session.metadata?.eventType !== eventType || session.metadata?.guestTier !== tier) {
+    throw new HttpsError(
+      'failed-precondition',
+      'This payment was for a different event type or guest tier.',
+    );
+  }
+
+  // Single use: atomically flip consumed on payments/{sessionId}.
+  const ref = db.collection('payments').doc(sessionId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (snap.exists && snap.data()?.consumed) {
+      throw new HttpsError('already-exists', 'This payment was already used for an event.');
+    }
+    tx.set(ref, { consumed: true, consumedAt: Date.now(), uid }, { merge: true });
+  });
+}
 
 /** Host-only hard delete of an event and all its photos / quests / members. */
 export const deleteEvent = onCall(async (request) => {
