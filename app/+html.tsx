@@ -25,9 +25,18 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="OurMoment" />
 
         <ScrollViewStyleReset />
-        {/* Installed-PWA polish: the body peeks through around the home
-            indicator / overscroll — keep it the app's dark canvas, not white. */}
-        <style dangerouslySetInnerHTML={{ __html: 'body{background-color:#0B0B0F}' }} />
+        {/* Installed-PWA polish: keep the canvas dark (overscroll/home-indicator
+            areas), and size the app with dvh — in iOS standalone mode `100%`
+            resolves against a layout viewport that stops above the home
+            indicator, leaving a dead strip at the bottom of every screen. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: [
+              'body{background-color:#0B0B0F}',
+              '@supports (height: 100dvh) { html, body, #root { height: 100dvh; } }',
+            ].join('\n'),
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>
