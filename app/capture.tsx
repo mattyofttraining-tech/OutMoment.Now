@@ -176,9 +176,12 @@ export default function CaptureScreen() {
         )}
 
         {/* Shutter row — gallery (left) and camera-flip (right) flank the shutter
-            so both are within easy thumb reach at the bottom of the screen. */}
+            so both are within easy thumb reach at the bottom of the screen.
+            Both side buttons render the same 48 px circle as the back button,
+            on the same 24 px edge inset as the top bar, vertically centered on
+            the shutter — one grid for all camera chrome. */}
         <View style={[styles.shutterRow, { marginBottom: buttonLift }]}>
-          <IconButton name="images" color="#fff" surface size={26} onPress={pickFromLibrary} />
+          <IconButton name="images" color="#fff" surface size={28} hitSlop={12} onPress={pickFromLibrary} />
           <PressableScale onPress={takePhoto} disabled={busy} activeScale={0.92} style={styles.shutterOuter}>
             <View style={styles.shutterInner}>{busy ? <ActivityIndicator color="#000" /> : null}</View>
           </PressableScale>
@@ -186,7 +189,7 @@ export default function CaptureScreen() {
             name="camera-reverse"
             color="#fff"
             surface
-            size={26}
+            size={28}
             hitSlop={12}
             onPress={() => setFacing((f) => (f === 'back' ? 'front' : 'back'))}
           />
@@ -212,7 +215,9 @@ const styles = StyleSheet.create({
   topGradient: { position: 'absolute', top: 0, left: 0, right: 0, height: 160 },
   bottomGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 220 },
   chrome: { flex: 1, justifyContent: 'space-between' },
-  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 12 },
+  // One shared edge inset for all camera chrome (top bar + shutter row), so
+  // the back button, gallery and flip buttons sit flush on the same vertical line.
+  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 24, paddingTop: 12 },
   backButton: {
     backgroundColor: 'rgba(0,0,0,0.55)',
     borderWidth: 1,
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
   },
   questChip: { backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 999, paddingHorizontal: 14, paddingVertical: 7 },
   prompt: { paddingHorizontal: 32, alignItems: 'center' },
-  shutterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 40, paddingBottom: 12 },
+  shutterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingBottom: 12 },
   shutterOuter: {
     width: 80,
     height: 80,
