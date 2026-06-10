@@ -14,6 +14,7 @@ import { Confetti } from '@/components/Confetti';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
+import { sound } from '@/utils/sound';
 
 export default function CaptureScreen() {
   const theme = useTheme();
@@ -60,13 +61,22 @@ export default function CaptureScreen() {
       setBusy(true);
       try {
         await capture(activeEventId, uri, questId ?? null);
-        if (quest) haptics.success();
-        else haptics.medium();
+        if (quest) {
+          // Quest complete — the full celebration: haptic, chime, confetti.
+          haptics.success();
+          sound.celebrate();
+        } else {
+          haptics.medium();
+        }
         setJustCaptured(true);
-        setTimeout(() => {
-          setJustCaptured(false);
-          dismiss();
-        }, 850);
+        // Give the quest celebration room to land; plain captures stay snappy.
+        setTimeout(
+          () => {
+            setJustCaptured(false);
+            dismiss();
+          },
+          quest ? 1500 : 850,
+        );
       } catch (e) {
         console.warn('[capture] upload failed', e);
         haptics.warning();
@@ -184,7 +194,7 @@ export default function CaptureScreen() {
       {/* Capture confirmation flash */}
       {justCaptured ? (
         <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(300)} style={styles.confirm}>
-          {quest ? <Confetti /> : null}
+          {quest ? <Confetti count={44} /> : null}
           <Ionicons name="checkmark-circle" size={72} color={theme.colors.success} />
           <Text variant="title3" color="#fff" style={{ marginTop: 8 }}>
             {quest ? t('capture.questComplete') : t('capture.added')}

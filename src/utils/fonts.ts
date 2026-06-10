@@ -1,9 +1,9 @@
-import { Platform, type TextStyle } from 'react-native';
+import { type TextStyle } from 'react-native';
 
 /**
- * Font resolution. On iOS we use the system font (San Francisco) for a truly
- * native feel; everywhere else we use Inter as a close proxy, mapping each
- * weight to its dedicated Inter family (custom fonts don't honour `fontWeight`).
+ * Font resolution. Inter everywhere — iOS, Android and web — so the native app
+ * and the PWA render type pixel-identically. Each weight maps to its dedicated
+ * Inter family (custom fonts don't honour `fontWeight`).
  */
 
 export const interFontMap = {
@@ -36,8 +36,5 @@ function normalizeWeight(weight: TextStyle['fontWeight']): Weight {
  * font on the current platform.
  */
 export function resolveFont(weight: TextStyle['fontWeight']): TextStyle {
-  if (Platform.OS === 'ios') {
-    return { fontWeight: weight }; // San Francisco via system
-  }
   return { fontFamily: interFontMap[normalizeWeight(weight)] };
 }

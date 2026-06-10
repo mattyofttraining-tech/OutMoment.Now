@@ -6,7 +6,7 @@ import { Redirect, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
-import { Button, Text } from '@/components/ui';
+import { BrandMark, Button, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { WELCOME_IMAGE } from '@/data/media';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -36,9 +36,7 @@ export default function Welcome() {
 
       <SafeAreaView style={styles.safe}>
         <Animated.View entering={FadeIn.duration(700)} style={styles.brand}>
-          <Text variant="overline" color="rgba(255,255,255,0.7)">
-            OURMOMENT
-          </Text>
+          <BrandMark variant="whisper" onPhoto />
         </Animated.View>
 
         <View style={styles.hero}>

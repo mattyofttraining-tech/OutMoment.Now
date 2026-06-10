@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Share, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,13 +8,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Badge, Button, IconButton, Text } from '@/components/ui';
+import { Badge, BrandMark, Button, dialog, IconButton, Text } from '@/components/ui';
 import { getWorld } from '@/data/eventWorlds';
 import type { OurEvent } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { takePendingBooking } from '@/services/payments';
 import { haptics } from '@/utils/haptics';
+import { shareMessage } from '@/utils/share';
 
 /**
  * Stripe Checkout return point for the web PWA (the native flow returns inside
@@ -107,7 +108,8 @@ export default function CheckoutCompleteScreen() {
       <Image source={{ uri: world.coverImage }} style={StyleSheet.absoluteFill} contentFit="cover" />
       <LinearGradient colors={['rgba(0,0,0,0.3)', world.gradient[0]]} style={StyleSheet.absoluteFill} />
       <SafeAreaView style={{ flex: 1, justifyContent: 'space-between', padding: 24 }} edges={['top', 'bottom']}>
-        <View style={{ alignItems: 'flex-end' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <BrandMark variant="whisper" onPhoto />
           <IconButton name="close" color="#fff" surface onPress={() => router.replace('/(tabs)')} />
         </View>
 
@@ -132,11 +134,15 @@ export default function CheckoutCompleteScreen() {
           <Button
             label={t('book.shareCode')}
             icon={<Ionicons name="share-outline" size={20} color={theme.colors.onAccent} />}
-            onPress={() =>
-              Share.share({
-                message: `Join our OurMoment event "${created.title}" — enter code ${created.code} in the app to add your photos.`,
-              })
-            }
+            onPress={async () => {
+              const result = await shareMessage(
+                t('common.shareMessage', { title: created.title, code: created.code }),
+              );
+              if (result === 'copied') {
+                haptics.success();
+                dialog.alert(t('common.copiedTitle'), t('common.copiedBody'), t('common.ok'));
+              }
+            }}
           />
           <Button
             label={t('book.copyCode')}

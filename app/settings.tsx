@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, useThemeControls, type ColorScheme } from '@/theme';
-import { Card, IconButton, PressableScale, Screen, Text } from '@/components/ui';
+import { BrandMark, Card, IconButton, PressableScale, Screen, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { SUPPORTED_LOCALES } from '@/i18n';
@@ -42,10 +42,13 @@ export default function SettingsScreen() {
         <TextInput
           value={name}
           onChangeText={setName}
+          // onEndEditing doesn't fire reliably on react-native-web — commit on
+          // blur too so the PWA saves the name just like the app.
           onEndEditing={() => setDisplayName(name.trim() || 'You')}
+          onBlur={() => setDisplayName(name.trim() || 'You')}
           placeholder={t('settings.yourName')}
           placeholderTextColor={theme.colors.textTertiary}
-          style={{ fontSize: 17, color: theme.colors.text }}
+          style={{ fontSize: 17, fontFamily: 'Inter_400Regular', color: theme.colors.text }}
         />
       </Card>
       <Text variant="caption" dim style={{ marginTop: 6 }}>
@@ -125,10 +128,11 @@ export default function SettingsScreen() {
         </View>
       </Card>
 
-      <View style={{ alignItems: 'center', paddingVertical: 24 }}>
+      <View style={{ alignItems: 'center', paddingVertical: 24, gap: 14 }}>
         <Text variant="caption" dim align="center">
           {t('settings.footer')}
         </Text>
+        <BrandMark variant="whisper" />
       </View>
     </Screen>
   );

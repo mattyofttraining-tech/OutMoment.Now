@@ -20,13 +20,16 @@ export interface PressableScaleProps extends PressableProps {
 
 /**
  * A pressable that springs down on touch — the tactile foundation for every
- * tappable surface in the app.
+ * tappable surface in the app. On web it also breathes up slightly on hover,
+ * so the PWA feels as alive under a cursor as the app does under a thumb.
  */
 export function PressableScale({
   activeScale = 0.96,
   haptic = false,
   onPressIn,
   onPressOut,
+  onHoverIn,
+  onHoverOut,
   style,
   children,
   ...rest
@@ -45,6 +48,14 @@ export function PressableScale({
       onPressOut={(e) => {
         scale.value = withSpring(1, motion.spring.snappy);
         onPressOut?.(e);
+      }}
+      onHoverIn={(e) => {
+        scale.value = withSpring(1.02, motion.spring.gentle);
+        onHoverIn?.(e);
+      }}
+      onHoverOut={(e) => {
+        scale.value = withSpring(1, motion.spring.gentle);
+        onHoverOut?.(e);
       }}
       style={[style, animatedStyle]}
     >

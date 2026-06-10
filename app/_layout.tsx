@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
+import Head from 'expo-router/head';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -13,6 +14,8 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import { ThemeProvider, useTheme } from '@/theme';
+import { AppDialogHost } from '@/components/ui';
+import { WebShell } from '@/components/WebShell';
 import { useAppStore } from '@/store/useAppStore';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -80,14 +83,25 @@ export default function RootLayout() {
     if (fontsReady && ready) SplashScreen.hideAsync().catch(() => {});
   }, [fontsReady, ready]);
 
-  if (!fontsReady || !ready) return null;
+  // Rendered even while loading so the static export bakes the page title in.
+  const head = (
+    <Head>
+      <title>OurMoment — Capture the moment. Together.</title>
+    </Head>
+  );
+
+  if (!fontsReady || !ready) return head;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {head}
       <SafeAreaProvider>
         <ThemeProvider>
           <StatusBar style="auto" />
-          <RootStack />
+          <WebShell>
+            <RootStack />
+          </WebShell>
+          <AppDialogHost />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

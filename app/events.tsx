@@ -1,11 +1,11 @@
 import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Button, EmptyState, IconButton, PressableScale, Screen, Text } from '@/components/ui';
+import { BrandMark, Button, dialog, EmptyState, IconButton, PressableScale, Screen, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -25,13 +25,13 @@ export default function EventsScreen() {
   const leaveEvent = useAppStore((s) => s.leaveEvent);
 
   const confirmRemove = (event: OurEvent, isHost: boolean) => {
-    Alert.alert(
+    dialog.show(
       isHost ? t('events.deleteTitle') : t('events.leaveTitle'),
       isHost ? t('events.deleteBody') : t('events.leaveBody'),
       [
-        { text: t('events.cancel'), style: 'cancel' },
+        { label: t('events.cancel'), style: 'cancel' },
         {
-          text: isHost ? t('events.delete') : t('events.leave'),
+          label: isHost ? t('events.delete') : t('events.leave'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -39,7 +39,7 @@ export default function EventsScreen() {
               else await leaveEvent(event.id);
             } catch (e) {
               console.warn('[events] remove failed', e);
-              Alert.alert(t('events.failed'), t('events.tryAgain'));
+              dialog.alert(t('events.failed'), t('events.tryAgain'), t('common.ok'));
             }
           },
         },
@@ -49,16 +49,16 @@ export default function EventsScreen() {
 
   const onPressEvent = (event: OurEvent) => {
     const isHost = event.hostUid === uid;
-    Alert.alert(event.title, undefined, [
+    dialog.show(event.title, undefined, [
       {
-        text: t('events.open'),
+        label: t('events.open'),
         onPress: () => {
           setActiveEvent(event.id);
           router.back();
         },
       },
-      { text: isHost ? t('events.deleteEvent') : t('events.leaveEvent'), style: 'destructive', onPress: () => confirmRemove(event, isHost) },
-      { text: t('events.cancel'), style: 'cancel' },
+      { label: isHost ? t('events.deleteEvent') : t('events.leaveEvent'), style: 'destructive', onPress: () => confirmRemove(event, isHost) },
+      { label: t('events.cancel'), style: 'cancel' },
     ]);
   };
 
@@ -115,6 +115,9 @@ export default function EventsScreen() {
       <View style={{ gap: 10, marginTop: 24 }}>
         <Button label={t('events.joinWithCode')} variant="secondary" onPress={() => { router.back(); router.push('/join'); }} />
         <Button label={t('events.hostEvent')} variant="ghost" onPress={() => { router.back(); router.push('/(tabs)/store'); }} />
+      </View>
+      <View style={{ alignItems: 'center', marginTop: 18 }}>
+        <BrandMark variant="whisper" />
       </View>
     </Screen>
   );

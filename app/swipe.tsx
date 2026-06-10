@@ -1,11 +1,11 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Button, EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
+import { BrandMark, Button, EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
 import { Confetti } from '@/components/Confetti';
 import { SwipeDeck, type SwipeDeckHandle } from '@/features/swipe/SwipeDeck';
@@ -13,6 +13,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { Photo, SwipeDecision } from '@/types';
 import { exportPhotoToLibrary } from '@/services/media';
+import { sound } from '@/utils/sound';
 
 export default function SwipeScreen() {
   const theme = useTheme();
@@ -30,6 +31,12 @@ export default function SwipeScreen() {
   const deckRef = useRef<SwipeDeckHandle>(null);
   const [savedCount, setSavedCount] = useState(0);
   const [done, setDone] = useState(false);
+
+  // Celebrate once the deck is finished and at least one moment was kept.
+  // (An effect, not the onEmpty callback, so it sees the final savedCount.)
+  useEffect(() => {
+    if (done && savedCount > 0) sound.celebrate();
+  }, [done, savedCount]);
 
   const onDecision = (photo: Photo, decision: SwipeDecision) => {
     if (decision === 'keep') {
@@ -69,11 +76,19 @@ export default function SwipeScreen() {
                 <Button label={t('swipe.done')} variant="secondary" onPress={() => router.back()} />
               </View>
             </EmptyState>
+            <View style={{ alignItems: 'center', marginTop: 18 }}>
+              <BrandMark variant="whisper" />
+            </View>
           </Animated.View>
         ) : (
           <>
             <View style={styles.deck}>
-              <SwipeDeck ref={deckRef} photos={photos} onDecision={onDecision} onEmpty={() => setDone(true)} />
+              <SwipeDeck
+                ref={deckRef}
+                photos={photos}
+                onDecision={onDecision}
+                onEmpty={() => setDone(true)}
+              />
             </View>
 
             <View style={styles.hint}>

@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, useThemeControls } from '@/theme';
-import { Badge, Button, Card, EmptyState, IconButton, PressableScale, ProgressRing, Text } from '@/components/ui';
+import { Badge, BrandMark, Button, Card, EmptyState, IconButton, PressableScale, ProgressRing, Text } from '@/components/ui';
 import { EventHero } from '@/features/event/EventHero';
 import { QuestCard } from '@/features/quests/QuestCard';
 import { useAppStore } from '@/store/useAppStore';
@@ -69,9 +69,7 @@ export default function MomentScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 6 }}>
           <IconButton name="swap-horizontal" onPress={() => router.push('/events')} surface />
-          <Text variant="overline" dim>
-            OURMOMENT
-          </Text>
+          <BrandMark variant="whisper" />
           <View style={{ flexDirection: 'row', gap: 4 }}>
             <IconButton name="stats-chart" onPress={() => router.push('/host')} surface />
             <IconButton name="person-circle-outline" onPress={() => router.push('/settings')} surface />

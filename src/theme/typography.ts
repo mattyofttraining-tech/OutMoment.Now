@@ -1,21 +1,13 @@
-import { Platform, TextStyle } from 'react-native';
+import { TextStyle } from 'react-native';
 
 /**
- * Typography scale modelled on Apple's San Francisco / Human Interface
- * guidelines. On iOS we use the system font (San Francisco); elsewhere we fall
- * back to the platform default, which keeps the type feeling native everywhere.
+ * Typography scale modelled on Apple's Human Interface guidelines. The actual
+ * family is Inter on every platform (see `utils/fonts.ts`), so the app and the
+ * PWA set type identically; this file only defines sizes, weights and rhythm.
  */
 
-const systemFont = Platform.select({
-  ios: undefined, // San Francisco
-  android: undefined, // Roboto
-  default: undefined,
-});
-
-const display = Platform.select({
-  ios: 'System',
-  default: undefined,
-});
+const systemFont = undefined; // family resolved per-weight in utils/fonts.ts
+const display = undefined;
 
 type Variant =
   | 'largeTitle'

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useTheme } from '@/theme';
-import { EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
+import { BrandMark, dialog, EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
+import { exportPhotosAsZip } from '@/utils/webExport';
 
 const COLUMNS = 3;
 const GAP = 3;
@@ -20,15 +21,18 @@ export default function SavedScreen() {
   const saved = useAppStore((s) => s.saved);
   const unsave = useAppStore((s) => s.unsave);
 
-  const tile = (Dimensions.get('window').width - GAP * (COLUMNS - 1)) / COLUMNS;
+  // Measure the list, don't trust the window: on desktop web the app renders
+  // inside a centred frame much narrower than the window.
+  const [gridWidth, setGridWidth] = useState(0);
+  const tile = gridWidth > 0 ? (gridWidth - GAP * (COLUMNS - 1)) / COLUMNS : 0;
+
   const exportedCount = saved.filter((s) => s.exportedToDevice).length;
   const [exporting, setExporting] = useState(false);
 
-  async function exportAll() {
-    if (saved.length === 0 || exporting) return;
+  async function exportAllNative() {
     const perm = await MediaLibrary.requestPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert(t('saved.permTitle'), t('saved.permBody'));
+      dialog.alert(t('saved.permTitle'), t('saved.permBody'), t('common.ok'));
       return;
     }
     setExporting(true);
@@ -46,13 +50,38 @@ export default function SavedScreen() {
     setExporting(false);
     if (ok > 0) haptics.success();
     else haptics.warning();
-    Alert.alert(t('saved.doneTitle'), `${ok} / ${saved.length} ${t('saved.doneToRoll')}`);
+    dialog.alert(t('saved.doneTitle'), `${ok} / ${saved.length} ${t('saved.doneToRoll')}`, t('common.ok'));
+  }
+
+  async function exportAllWeb() {
+    setExporting(true);
+    try {
+      const { ok, failed } = await exportPhotosAsZip(
+        saved.map((s) => ({ name: `ourmoment-${s.photoId}`, url: s.url })),
+      );
+      if (ok > 0) {
+        dialog.alert(
+          t('saved.doneTitle'),
+          failed > 0 ? `${ok} / ${saved.length} ${t('saved.doneToZip')}` : t('saved.zipReady'),
+          t('common.ok'),
+        );
+      } else {
+        dialog.alert(t('saved.exportFailedTitle'), t('saved.exportFailedBody'), t('common.ok'));
+      }
+    } catch (e) {
+      console.warn('[export] zip failed', e);
+      dialog.alert(t('saved.exportFailedTitle'), t('saved.exportFailedBody'), t('common.ok'));
+    } finally {
+      setExporting(false);
+    }
   }
 
   function onExportPress() {
-    Alert.alert(t('saved.exportTitle'), t('saved.exportPrompt'), [
-      { text: t('saved.cancel'), style: 'cancel' },
-      { text: t('saved.saveToRoll'), onPress: exportAll },
+    if (saved.length === 0 || exporting) return;
+    const isWeb = Platform.OS === 'web';
+    dialog.show(t('saved.exportTitle'), isWeb ? t('saved.exportPromptWeb') : t('saved.exportPrompt'), [
+      { label: t('saved.cancel'), style: 'cancel' },
+      { label: isWeb ? t('saved.downloadZip') : t('saved.saveToRoll'), onPress: isWeb ? exportAllWeb : exportAllNative },
     ]);
   }
 
@@ -82,11 +111,19 @@ export default function SavedScreen() {
           keyExtractor={(s) => s.photoId}
           numColumns={COLUMNS}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 140, flexGrow: 1 }}
+          onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}
+          contentContainerStyle={{ paddingBottom: 110, flexGrow: 1 }}
           ListEmptyComponent={
             <View style={{ flex: 1, justifyContent: 'center', paddingTop: 80 }}>
               <EmptyState glyph="🤍" title={t('saved.emptyTitle')} subtitle={t('saved.emptyBody')} />
             </View>
+          }
+          ListFooterComponent={
+            saved.length > 0 ? (
+              <View style={{ alignItems: 'center', paddingVertical: 22 }}>
+                <BrandMark variant="whisper" />
+              </View>
+            ) : null
           }
           renderItem={({ item, index }) => (
             <PressableScale

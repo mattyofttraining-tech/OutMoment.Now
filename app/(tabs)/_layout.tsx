@@ -25,7 +25,7 @@ export default function TabsLayout() {
           height: Platform.OS === 'ios' ? 88 : 64,
           paddingTop: 6,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
         tabBarBackground: () =>
           Platform.OS === 'ios' ? (
             <BlurView

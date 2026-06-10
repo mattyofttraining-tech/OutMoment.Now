@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Button, EmptyState, IconButton, Text } from '@/components/ui';
+import { BrandMark, Button, EmptyState, IconButton, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
 import { PhotoGrid } from '@/features/gallery/PhotoGrid';
 import { useAppStore } from '@/store/useAppStore';
@@ -60,13 +60,14 @@ export default function GalleryScreen() {
 
   const header = (
     <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 14 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View>
           <Text variant="largeTitle">{event.title}</Text>
           <Text variant="footnote" dim>
             {photos.length} {t('gallery.photosLabel')}
           </Text>
         </View>
+        <BrandMark variant="whisper" style={{ marginTop: 10 }} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 }}>
         <CountdownBadge expiresAt={event.expiresAt} />

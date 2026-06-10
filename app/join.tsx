@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme';
-import { Button, IconButton, Screen, Text } from '@/components/ui';
+import { BrandMark, Button, IconButton, Screen, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { normalizeCode } from '@/utils/code';
@@ -42,6 +42,7 @@ export default function JoinScreen() {
     <Screen edges={['top', 'bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <View style={styles.header}>
+          <BrandMark variant="whisper" />
           <IconButton name="close" onPress={() => router.back()} surface />
         </View>
 
@@ -94,16 +95,17 @@ export default function JoinScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', justifyContent: 'flex-end', paddingTop: 4 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 4 },
   input: {
     height: 60,
     borderRadius: 18,
     paddingHorizontal: 18,
     fontSize: 18,
+    fontFamily: 'Inter_400Regular',
   },
   codeInput: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
     letterSpacing: 2,
     textAlign: 'center',
   },

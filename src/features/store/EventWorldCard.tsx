@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import type { EventWorld } from '@/types';
-import { useTheme } from '@/theme';
+import { motion, useTheme } from '@/theme';
 import { Badge, PressableScale, Text } from '@/components/ui';
 import { fromLabel } from '@/data/pricing';
 
@@ -12,12 +13,34 @@ export interface EventWorldCardProps {
   onPress: () => void;
 }
 
-/** An elegant, photo-forward card for each event world in the store. */
+/**
+ * An elegant, photo-forward card for each event world in the store. A gentle
+ * 3D tilt on hover/press gives the cards physical depth without shouting.
+ */
 export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
   const theme = useTheme();
+  const tilt = useSharedValue(0);
+
+  const tiltStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 900 },
+      { rotateX: `${tilt.value * 2.4}deg` },
+      { rotateY: `${tilt.value * -1.6}deg` },
+    ],
+  }));
+
   return (
-    <PressableScale onPress={onPress} activeScale={0.97} haptic style={{ marginBottom: theme.spacing.lg }}>
-      <View style={[styles.card, theme.shadows.lg, { borderRadius: theme.radius.xxl }]}>
+    <PressableScale
+      onPress={onPress}
+      activeScale={0.97}
+      haptic
+      style={{ marginBottom: theme.spacing.lg }}
+      onHoverIn={() => (tilt.value = withSpring(1, motion.spring.gentle))}
+      onHoverOut={() => (tilt.value = withSpring(0, motion.spring.gentle))}
+      onPressIn={() => (tilt.value = withSpring(1, motion.spring.snappy))}
+      onPressOut={() => (tilt.value = withSpring(0, motion.spring.gentle))}
+    >
+      <Animated.View style={[styles.card, theme.shadows.lg, { borderRadius: theme.radius.xxl }, tiltStyle]}>
         <Image source={{ uri: world.coverImage }} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.15)', world.gradient[0]]}
@@ -39,7 +62,7 @@ export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
             {world.tagline}
           </Text>
         </View>
-      </View>
+      </Animated.View>
     </PressableScale>
   );
 }

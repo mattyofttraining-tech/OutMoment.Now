@@ -10,3 +10,6 @@ export { Badge } from './Badge';
 export { IconButton } from './IconButton';
 export { EmptyState } from './EmptyState';
 export { ProgressRing } from './ProgressRing';
+export { AppDialogHost, dialog } from './AppDialog';
+export type { DialogAction } from './AppDialog';
+export { BrandMark } from './BrandMark';

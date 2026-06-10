@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
@@ -13,10 +13,7 @@ import type { Photo, SwipeDecision } from '@/types';
 import { motion } from '@/theme';
 import { Text } from '@/components/ui';
 import { haptics } from '@/utils/haptics';
-import { SwipeCard, CARD_W, CARD_H } from './SwipeCard';
-
-const { width: SCREEN_W } = Dimensions.get('window');
-const SWIPE_THRESHOLD = SCREEN_W * 0.28;
+import { SwipeCard } from './SwipeCard';
 
 export interface SwipeDeckHandle {
   keep: () => void;
@@ -35,14 +32,23 @@ export interface SwipeDeckProps {
  * time. Right = keep forever, left = let it go with the rest of the pool.
  * Spring physics + a real haptic on every save. Action buttons drive the same
  * animation via the imperative handle.
+ *
+ * Card size and swipe thresholds come from the measured container — never the
+ * window — so the deck is correct inside the desktop-web frame too.
  */
 export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function SwipeDeck(
   { photos, onDecision, onIndexChange, onEmpty },
   ref,
 ) {
   const [index, setIndex] = useState(0);
+  const [box, setBox] = useState({ w: 0, h: 0 });
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+
+  const cardW = Math.max(0, box.w - 32);
+  const cardH = Math.min(box.h * 0.92, cardW * 1.45);
+  const threshold = Math.max(80, box.w * 0.28);
+  const flingTo = Math.max(box.w, 600) * 1.5;
 
   const current = photos[index];
   const next = photos[index + 1];
@@ -65,12 +71,12 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
     (decision: SwipeDecision) => {
       if (decision === 'keep') haptics.success();
       else haptics.soft();
-      const to = decision === 'keep' ? SCREEN_W * 1.5 : -SCREEN_W * 1.5;
+      const to = decision === 'keep' ? flingTo : -flingTo;
       translateX.value = withTiming(to, { duration: 240 }, (finished) => {
         if (finished) runOnJS(advance)(decision);
       });
     },
-    [advance, translateX],
+    [advance, translateX, flingTo],
   );
 
   useImperativeHandle(ref, () => ({
@@ -84,11 +90,11 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
       translateY.value = e.translationY * 0.4;
     })
     .onEnd((e) => {
-      if (Math.abs(e.translationX) > SWIPE_THRESHOLD || Math.abs(e.velocityX) > 800) {
+      if (Math.abs(e.translationX) > threshold || Math.abs(e.velocityX) > 800) {
         const decision: SwipeDecision = e.translationX > 0 ? 'keep' : 'pass';
         if (decision === 'keep') runOnJS(haptics.success)();
         else runOnJS(haptics.soft)();
-        const to = decision === 'keep' ? SCREEN_W * 1.5 : -SCREEN_W * 1.5;
+        const to = decision === 'keep' ? flingTo : -flingTo;
         translateX.value = withTiming(to, { duration: 220 }, (finished) => {
           if (finished) runOnJS(advance)(decision);
         });
@@ -99,7 +105,8 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
     });
 
   const topCardStyle = useAnimatedStyle(() => {
-    const rotate = interpolate(translateX.value, [-SCREEN_W, 0, SCREEN_W], [-9, 0, 9]);
+    const range = Math.max(box.w, 320);
+    const rotate = interpolate(translateX.value, [-range, 0, range], [-9, 0, 9]);
     return {
       transform: [
         { translateX: translateX.value },
@@ -110,59 +117,60 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
   });
 
   const keepOverlay = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1], 'clamp'),
+    opacity: interpolate(translateX.value, [0, threshold], [0, 1], 'clamp'),
   }));
   const passOverlay = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [-SWIPE_THRESHOLD, 0], [1, 0], 'clamp'),
+    opacity: interpolate(translateX.value, [-threshold, 0], [1, 0], 'clamp'),
   }));
 
   const nextCardStyle = useAnimatedStyle(() => {
-    const progress = Math.min(1, Math.abs(translateX.value) / SWIPE_THRESHOLD);
+    const progress = Math.min(1, Math.abs(translateX.value) / threshold);
     return {
       transform: [{ scale: interpolate(progress, [0, 1], [0.94, 1]) }],
       opacity: interpolate(progress, [0, 1], [0.6, 1]),
     };
   });
 
-  if (!current) return null;
-
   return (
-    <View style={styles.container}>
-      {next ? (
-        <Animated.View style={[styles.cardWrap, nextCardStyle]} pointerEvents="none">
-          <SwipeCard photo={next} />
-        </Animated.View>
+    <View style={styles.container} onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
+      {current && cardW > 0 ? (
+        <>
+          {next ? (
+            <Animated.View style={[styles.cardWrap, nextCardStyle]} pointerEvents="none">
+              <View style={{ width: cardW, height: cardH }}>
+                <SwipeCard photo={next} />
+              </View>
+            </Animated.View>
+          ) : null}
+
+          <GestureDetector gesture={pan}>
+            <Animated.View style={[styles.cardWrap, topCardStyle]}>
+              <View style={{ width: cardW, height: cardH }}>
+                <SwipeCard photo={current} />
+
+                {/* Decision stamps, driven by the same pan value. */}
+                <Animated.View style={[styles.stamp, styles.keepStamp, keepOverlay]} pointerEvents="none">
+                  <Text variant="title2" weight="700" color="#34C759">
+                    KEEP
+                  </Text>
+                </Animated.View>
+                <Animated.View style={[styles.stamp, styles.passStamp, passOverlay]} pointerEvents="none">
+                  <Text variant="title2" weight="700" color="#FF453A">
+                    LET GO
+                  </Text>
+                </Animated.View>
+              </View>
+            </Animated.View>
+          </GestureDetector>
+        </>
       ) : null}
-
-      <GestureDetector gesture={pan}>
-        <Animated.View style={[styles.cardWrap, topCardStyle]}>
-          <View style={styles.cardSized}>
-            <SwipeCard photo={current} />
-
-            {/* Decision stamps, driven by the same pan value. */}
-            <Animated.View style={[styles.stamp, styles.keepStamp, keepOverlay]} pointerEvents="none">
-              <Text variant="title2" weight="700" color="#34C759">
-                KEEP
-              </Text>
-            </Animated.View>
-            <Animated.View style={[styles.stamp, styles.passStamp, passOverlay]} pointerEvents="none">
-              <Text variant="title2" weight="700" color="#FF453A">
-                LET GO
-              </Text>
-            </Animated.View>
-          </View>
-        </Animated.View>
-      </GestureDetector>
     </View>
   );
 });
 
-export { SWIPE_THRESHOLD };
-
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   cardWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' },
-  cardSized: { width: CARD_W, height: CARD_H },
   stamp: {
     position: 'absolute',
     top: 28,

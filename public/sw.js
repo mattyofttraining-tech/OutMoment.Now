@@ -10,7 +10,7 @@
  *  - Everything else (Firebase APIs, Storage, Stripe) -> network only.
  */
 
-const CACHE = 'ourmoment-v1';
+const CACHE = 'ourmoment-v2';
 const SHELL = '/index.html';
 
 self.addEventListener('install', (event) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Share, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Badge, Button, Card, IconButton, Text } from '@/components/ui';
+import { Badge, BrandMark, Button, Card, dialog, IconButton, PressableScale, Text } from '@/components/ui';
 import { getWorld } from '@/data/eventWorlds';
 import { GUEST_TIERS, formatPrice, priceFor } from '@/data/pricing';
 import type { EventType, GuestTierId, OurEvent } from '@/types';
@@ -16,7 +16,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { savePendingBooking, startCheckout } from '@/services/payments';
 import { haptics } from '@/utils/haptics';
-import { PressableScale } from '@/components/ui';
+import { shareMessage } from '@/utils/share';
 
 export default function BookScreen() {
   const theme = useTheme();
@@ -86,7 +86,8 @@ export default function BookScreen() {
         <Image source={{ uri: world.coverImage }} style={StyleSheet.absoluteFill} contentFit="cover" />
         <LinearGradient colors={['rgba(0,0,0,0.3)', world.gradient[0]]} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={{ flex: 1, justifyContent: 'space-between', padding: 24 }} edges={['top', 'bottom']}>
-          <View style={{ alignItems: 'flex-end' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <BrandMark variant="whisper" onPhoto />
             <IconButton name="close" color="#fff" surface onPress={() => router.dismissAll()} />
           </View>
 
@@ -111,11 +112,15 @@ export default function BookScreen() {
             <Button
               label={t('book.shareCode')}
               icon={<Ionicons name="share-outline" size={20} color={theme.colors.onAccent} />}
-              onPress={() =>
-                Share.share({
-                  message: `Join our OurMoment event "${created.title}" — enter code ${created.code} in the app to add your photos.`,
-                })
-              }
+              onPress={async () => {
+                const result = await shareMessage(
+                  t('common.shareMessage', { title: created.title, code: created.code }),
+                );
+                if (result === 'copied') {
+                  haptics.success();
+                  dialog.alert(t('common.copiedTitle'), t('common.copiedBody'), t('common.ok'));
+                }
+              }}
             />
             <Button
               label={t('book.copyCode')}
@@ -311,7 +316,7 @@ function placeholderTitle(type: EventType): string {
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16, paddingTop: 6 },
   banner: { height: 200, overflow: 'hidden', justifyContent: 'flex-end', backgroundColor: '#111' },
-  input: { minHeight: 54, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, fontSize: 17 },
+  input: { minHeight: 54, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, fontSize: 17, fontFamily: 'Inter_400Regular' },
   textArea: { minHeight: 120, textAlignVertical: 'top' },
   footer: {
     position: 'absolute',

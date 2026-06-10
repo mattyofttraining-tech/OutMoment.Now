@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dimensions, FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import type { Photo } from '@/types';
@@ -25,8 +25,10 @@ export function PhotoGrid({
   ListEmptyComponent,
 }: PhotoGridProps) {
   const theme = useTheme();
-  const screenW = Dimensions.get('window').width;
-  const tile = (screenW - GAP * (COLUMNS - 1)) / COLUMNS;
+  // Measure the list, don't trust the window: on desktop web the app renders
+  // inside a centred frame much narrower than the window.
+  const [gridWidth, setGridWidth] = useState(0);
+  const tile = gridWidth > 0 ? (gridWidth - GAP * (COLUMNS - 1)) / COLUMNS : 0;
 
   const renderItem: ListRenderItem<Photo> = ({ item, index }) => (
     <PressableScale
@@ -61,6 +63,7 @@ export function PhotoGrid({
       renderItem={renderItem}
       numColumns={COLUMNS}
       showsVerticalScrollIndicator={false}
+      onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={ListEmptyComponent}
       contentContainerStyle={{ paddingBottom: 120 }}

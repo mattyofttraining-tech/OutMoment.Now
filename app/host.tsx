@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
-import { Alert, Share, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Avatar, Badge, Button, Card, EmptyState, IconButton, ProgressRing, Screen, Text } from '@/components/ui';
+import { Avatar, Badge, BrandMark, Button, Card, dialog, EmptyState, IconButton, ProgressRing, Screen, Text } from '@/components/ui';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getWorld } from '@/data/eventWorlds';
 import { getCountdown } from '@/utils/time';
 import { haptics } from '@/utils/haptics';
+import { shareMessage } from '@/utils/share';
 
 export default function HostScreen() {
   const theme = useTheme();
@@ -84,10 +85,10 @@ export default function HostScreen() {
   const countdown = getCountdown(event.expiresAt);
 
   const confirmDelete = () => {
-    Alert.alert(t('host.deleteTitle'), t('host.deleteBody'), [
-      { text: t('host.cancel'), style: 'cancel' },
+    dialog.show(t('host.deleteTitle'), t('host.deleteBody'), [
+      { label: t('host.cancel'), style: 'cancel' },
       {
-        text: t('host.delete'),
+        label: t('host.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -97,11 +98,19 @@ export default function HostScreen() {
             router.replace('/(tabs)');
           } catch (e) {
             console.warn('[host] delete failed', e);
-            Alert.alert(t('host.deleteFailed'), t('host.tryAgain'));
+            dialog.alert(t('host.deleteFailed'), t('host.tryAgain'), t('common.ok'));
           }
         },
       },
     ]);
+  };
+
+  const onShare = async () => {
+    const result = await shareMessage(t('common.shareMessage', { title: event.title, code: event.code }));
+    if (result === 'copied') {
+      haptics.success();
+      dialog.alert(t('common.copiedTitle'), t('common.copiedBody'), t('common.ok'));
+    }
   };
 
   return (
@@ -134,11 +143,7 @@ export default function HostScreen() {
             label={t('host.share')}
             size="md"
             icon={<Ionicons name="share-outline" size={18} color={theme.colors.onAccent} />}
-            onPress={() =>
-              Share.share({
-                message: `Join our OurMoment event "${event.title}" — enter code ${event.code} in the app to add your photos.`,
-              })
-            }
+            onPress={onShare}
             style={{ flex: 1 }}
           />
           <Button
@@ -230,6 +235,9 @@ export default function HostScreen() {
       <Text variant="caption" dim align="center" style={{ marginTop: 20 }}>
         {t('host.vanishesNote')}
       </Text>
+      <View style={{ alignItems: 'center', marginTop: 14 }}>
+        <BrandMark variant="whisper" />
+      </View>
 
       {isHost ? (
         <Button

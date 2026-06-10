@@ -33,6 +33,13 @@ export const SUPPORTED_LOCALES: { code: LocaleCode; label: string; flag: string 
 export const translations = {
   en: {
     tabs: { moment: 'Moment', gallery: 'Gallery', store: 'Store', saved: 'Saved' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Copied',
+      copiedBody: 'The invite is on your clipboard — paste it anywhere.',
+      shareMessage:
+        'Join our OurMoment event "%{title}" — enter code %{code} in the app to add your photos.',
+    },
     store: {
       headline: 'Don’t let the day disappear',
       subtitle:
@@ -195,6 +202,12 @@ export const translations = {
       permBody: 'Allow access to your photos to save them to your device.',
       doneTitle: 'Export complete',
       doneToRoll: 'saved to your camera roll.',
+      exportPromptWeb: 'Download all your saved moments as one ZIP file?',
+      downloadZip: 'Download ZIP',
+      zipReady: 'Your moments are downloading as OurMoment-Saved.zip.',
+      doneToZip: 'photos in your ZIP — the rest couldn’t be fetched.',
+      exportFailedTitle: 'Export failed',
+      exportFailedBody: 'Your photos couldn’t be downloaded. Check your connection and try again.',
     },
     book: {
       eventName: 'Event name',
@@ -222,6 +235,13 @@ export const translations = {
   },
   de: {
     tabs: { moment: 'Moment', gallery: 'Galerie', store: 'Shop', saved: 'Gespeichert' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Kopiert',
+      copiedBody: 'Die Einladung ist in deiner Zwischenablage – füge sie überall ein.',
+      shareMessage:
+        'Mach mit bei unserem OurMoment-Event "%{title}" – gib den Code %{code} in der App ein, um deine Fotos hinzuzufügen.',
+    },
     store: {
       headline: 'Lass den Tag nicht verschwinden',
       subtitle:
@@ -384,6 +404,12 @@ export const translations = {
       permBody: 'Erlaube den Zugriff auf deine Fotos, um sie auf deinem Gerät zu speichern.',
       doneTitle: 'Export abgeschlossen',
       doneToRoll: 'in deiner Galerie gespeichert.',
+      exportPromptWeb: 'Alle gespeicherten Momente als eine ZIP-Datei herunterladen?',
+      downloadZip: 'ZIP herunterladen',
+      zipReady: 'Deine Momente werden als OurMoment-Saved.zip heruntergeladen.',
+      doneToZip: 'Fotos in deiner ZIP – der Rest konnte nicht geladen werden.',
+      exportFailedTitle: 'Export fehlgeschlagen',
+      exportFailedBody: 'Deine Fotos konnten nicht heruntergeladen werden. Prüfe deine Verbindung und versuch es erneut.',
     },
     book: {
       eventName: 'Event-Name',
@@ -411,6 +437,13 @@ export const translations = {
   },
   fr: {
     tabs: { moment: 'Moment', gallery: 'Galerie', store: 'Boutique', saved: 'Enregistré' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Copié',
+      copiedBody: 'L’invitation est dans votre presse-papiers — collez-la où vous voulez.',
+      shareMessage:
+        'Rejoignez notre événement OurMoment « %{title} » — saisissez le code %{code} dans l’app pour ajouter vos photos.',
+    },
     store: {
       headline: 'Ne laissez pas le jour disparaître',
       subtitle:
@@ -573,6 +606,12 @@ export const translations = {
       permBody: 'Autorisez l’accès à vos photos pour les enregistrer sur votre appareil.',
       doneTitle: 'Export terminé',
       doneToRoll: 'enregistrées dans votre pellicule.',
+      exportPromptWeb: 'Télécharger tous vos moments sauvegardés dans un fichier ZIP ?',
+      downloadZip: 'Télécharger le ZIP',
+      zipReady: 'Vos moments se téléchargent sous le nom OurMoment-Saved.zip.',
+      doneToZip: 'photos dans votre ZIP — les autres n’ont pas pu être récupérées.',
+      exportFailedTitle: 'Échec de l’export',
+      exportFailedBody: 'Impossible de télécharger vos photos. Vérifiez votre connexion et réessayez.',
     },
     book: {
       eventName: 'Nom de l’événement',
@@ -600,6 +639,13 @@ export const translations = {
   },
   es: {
     tabs: { moment: 'Momento', gallery: 'Galería', store: 'Tienda', saved: 'Guardado' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Copiado',
+      copiedBody: 'La invitación está en tu portapapeles: pégala donde quieras.',
+      shareMessage:
+        'Únete a nuestro evento de OurMoment «%{title}»: introduce el código %{code} en la app para añadir tus fotos.',
+    },
     store: {
       headline: 'No dejes que el día desaparezca',
       subtitle:
@@ -762,6 +808,12 @@ export const translations = {
       permBody: 'Permite el acceso a tus fotos para guardarlas en tu dispositivo.',
       doneTitle: 'Exportación completa',
       doneToRoll: 'guardadas en tu carrete.',
+      exportPromptWeb: '¿Descargar todos tus momentos guardados en un archivo ZIP?',
+      downloadZip: 'Descargar ZIP',
+      zipReady: 'Tus momentos se están descargando como OurMoment-Saved.zip.',
+      doneToZip: 'fotos en tu ZIP; el resto no se pudo recuperar.',
+      exportFailedTitle: 'Error al exportar',
+      exportFailedBody: 'No se pudieron descargar tus fotos. Comprueba tu conexión e inténtalo de nuevo.',
     },
     book: {
       eventName: 'Nombre del evento',
@@ -789,6 +841,13 @@ export const translations = {
   },
   it: {
     tabs: { moment: 'Momento', gallery: 'Galleria', store: 'Negozio', saved: 'Salvati' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Copiato',
+      copiedBody: 'L’invito è negli appunti: incollalo dove vuoi.',
+      shareMessage:
+        'Unisciti al nostro evento OurMoment "%{title}": inserisci il codice %{code} nell’app per aggiungere le tue foto.',
+    },
     store: {
       headline: 'Non lasciare che il giorno svanisca',
       subtitle:
@@ -951,6 +1010,12 @@ export const translations = {
       permBody: 'Consenti l’accesso alle tue foto per salvarle sul dispositivo.',
       doneTitle: 'Esportazione completata',
       doneToRoll: 'salvate nel tuo rullino.',
+      exportPromptWeb: 'Scaricare tutti i momenti salvati in un unico file ZIP?',
+      downloadZip: 'Scarica ZIP',
+      zipReady: 'I tuoi momenti si stanno scaricando come OurMoment-Saved.zip.',
+      doneToZip: 'foto nel tuo ZIP: le altre non sono state recuperate.',
+      exportFailedTitle: 'Esportazione non riuscita',
+      exportFailedBody: 'Impossibile scaricare le tue foto. Controlla la connessione e riprova.',
     },
     book: {
       eventName: 'Nome dell’evento',
@@ -978,6 +1043,13 @@ export const translations = {
   },
   nl: {
     tabs: { moment: 'Moment', gallery: 'Galerij', store: 'Winkel', saved: 'Bewaard' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Gekopieerd',
+      copiedBody: 'De uitnodiging staat op je klembord — plak hem waar je wilt.',
+      shareMessage:
+        'Doe mee met ons OurMoment-event "%{title}" — voer code %{code} in de app in om je foto’s toe te voegen.',
+    },
     store: {
       headline: 'Laat de dag niet verdwijnen',
       subtitle:
@@ -1140,6 +1212,12 @@ export const translations = {
       permBody: 'Geef toegang tot je foto’s om ze op je apparaat op te slaan.',
       doneTitle: 'Export voltooid',
       doneToRoll: 'opgeslagen in je filmrol.',
+      exportPromptWeb: 'Al je bewaarde momenten als één ZIP-bestand downloaden?',
+      downloadZip: 'ZIP downloaden',
+      zipReady: 'Je momenten worden gedownload als OurMoment-Saved.zip.',
+      doneToZip: 'foto’s in je ZIP — de rest kon niet worden opgehaald.',
+      exportFailedTitle: 'Exporteren mislukt',
+      exportFailedBody: 'Je foto’s konden niet worden gedownload. Controleer je verbinding en probeer het opnieuw.',
     },
     book: {
       eventName: 'Naam evenement',
@@ -1167,6 +1245,13 @@ export const translations = {
   },
   pt: {
     tabs: { moment: 'Momento', gallery: 'Galeria', store: 'Loja', saved: 'Guardados' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Copiado',
+      copiedBody: 'O convite está na sua área de transferência — cole onde quiser.',
+      shareMessage:
+        'Junte-se ao nosso evento OurMoment "%{title}" — introduza o código %{code} na app para adicionar as suas fotos.',
+    },
     store: {
       headline: 'Não deixe o dia desaparecer',
       subtitle:
@@ -1329,6 +1414,12 @@ export const translations = {
       permBody: 'Permita o acesso às suas fotos para as guardar no seu dispositivo.',
       doneTitle: 'Exportação concluída',
       doneToRoll: 'guardadas no seu rolo de câmara.',
+      exportPromptWeb: 'Transferir todos os seus momentos guardados num único ficheiro ZIP?',
+      downloadZip: 'Transferir ZIP',
+      zipReady: 'Os seus momentos estão a ser transferidos como OurMoment-Saved.zip.',
+      doneToZip: 'fotos no seu ZIP — as restantes não puderam ser obtidas.',
+      exportFailedTitle: 'Falha na exportação',
+      exportFailedBody: 'Não foi possível transferir as suas fotos. Verifique a ligação e tente novamente.',
     },
     book: {
       eventName: 'Nome do evento',
@@ -1356,6 +1447,13 @@ export const translations = {
   },
   pl: {
     tabs: { moment: 'Moment', gallery: 'Galeria', store: 'Sklep', saved: 'Zapisane' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Skopiowano',
+      copiedBody: 'Zaproszenie jest w schowku — wklej je, gdzie chcesz.',
+      shareMessage:
+        'Dołącz do naszego wydarzenia OurMoment „%{title}” — wpisz kod %{code} w aplikacji, aby dodać swoje zdjęcia.',
+    },
     store: {
       headline: 'Nie pozwól, by ten dzień zniknął',
       subtitle:
@@ -1518,6 +1616,12 @@ export const translations = {
       permBody: 'Zezwól na dostęp do zdjęć, aby zapisać je na urządzeniu.',
       doneTitle: 'Eksport zakończony',
       doneToRoll: 'zapisano w Twojej galerii.',
+      exportPromptWeb: 'Pobrać wszystkie zapisane momenty jako jeden plik ZIP?',
+      downloadZip: 'Pobierz ZIP',
+      zipReady: 'Twoje momenty pobierają się jako OurMoment-Saved.zip.',
+      doneToZip: 'zdjęć w Twoim ZIP-ie — reszty nie udało się pobrać.',
+      exportFailedTitle: 'Eksport nie powiódł się',
+      exportFailedBody: 'Nie udało się pobrać Twoich zdjęć. Sprawdź połączenie i spróbuj ponownie.',
     },
     book: {
       eventName: 'Nazwa wydarzenia',
@@ -1545,6 +1649,13 @@ export const translations = {
   },
   da: {
     tabs: { moment: 'Øjeblik', gallery: 'Galleri', store: 'Butik', saved: 'Gemte' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Kopieret',
+      copiedBody: 'Invitationen ligger i din udklipsholder — indsæt den hvor som helst.',
+      shareMessage:
+        'Vær med til vores OurMoment-event "%{title}" — indtast koden %{code} i appen for at tilføje dine billeder.',
+    },
     store: {
       headline: 'Lad ikke dagen forsvinde',
       subtitle:
@@ -1707,6 +1818,12 @@ export const translations = {
       permBody: 'Tillad adgang til dine billeder for at gemme dem på din enhed.',
       doneTitle: 'Eksport fuldført',
       doneToRoll: 'gemt i din kamerarulle.',
+      exportPromptWeb: 'Download alle dine gemte øjeblikke som én ZIP-fil?',
+      downloadZip: 'Download ZIP',
+      zipReady: 'Dine øjeblikke downloades som OurMoment-Saved.zip.',
+      doneToZip: 'billeder i din ZIP — resten kunne ikke hentes.',
+      exportFailedTitle: 'Eksport mislykkedes',
+      exportFailedBody: 'Dine billeder kunne ikke downloades. Tjek din forbindelse og prøv igen.',
     },
     book: {
       eventName: 'Begivenhedens navn',
@@ -1734,6 +1851,13 @@ export const translations = {
   },
   sv: {
     tabs: { moment: 'Stund', gallery: 'Galleri', store: 'Butik', saved: 'Sparade' },
+    common: {
+      ok: 'OK',
+      copiedTitle: 'Kopierat',
+      copiedBody: 'Inbjudan ligger i urklipp — klistra in den var du vill.',
+      shareMessage:
+        'Gå med i vårt OurMoment-event "%{title}" — ange koden %{code} i appen för att lägga till dina bilder.',
+    },
     store: {
       headline: 'Låt inte dagen försvinna',
       subtitle:
@@ -1896,6 +2020,12 @@ export const translations = {
       permBody: 'Tillåt åtkomst till dina bilder för att spara dem på din enhet.',
       doneTitle: 'Export klar',
       doneToRoll: 'sparade i din kamerarulle.',
+      exportPromptWeb: 'Ladda ner alla dina sparade ögonblick som en ZIP-fil?',
+      downloadZip: 'Ladda ner ZIP',
+      zipReady: 'Dina ögonblick laddas ner som OurMoment-Saved.zip.',
+      doneToZip: 'bilder i din ZIP — resten kunde inte hämtas.',
+      exportFailedTitle: 'Exporten misslyckades',
+      exportFailedBody: 'Dina bilder kunde inte laddas ner. Kontrollera din anslutning och försök igen.',
     },
     book: {
       eventName: 'Evenemangets namn',

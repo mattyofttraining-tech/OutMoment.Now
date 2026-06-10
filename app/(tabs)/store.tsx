@@ -1,8 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Screen, Text } from '@/components/ui';
+import { BrandMark, Screen, Text } from '@/components/ui';
 import { EventWorldCard } from '@/features/store/EventWorldCard';
 import { EVENT_WORLD_LIST } from '@/data/eventWorlds';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -13,17 +12,7 @@ export default function StoreScreen() {
 
   return (
     <Screen scroll edges={['top']}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 4 }}>
-        <Image
-          source={require('../../assets/images/ourmoment-logo.png')}
-          style={{ width: 44, height: 44, borderRadius: 11 }}
-          contentFit="cover"
-          accessibilityLabel="OurMoment logo"
-        />
-        <Text variant="title2" weight="700">
-          OurMoment
-        </Text>
-      </View>
+      <BrandMark variant="badge" style={{ paddingTop: 4 }} />
 
       <View style={{ paddingTop: 16, paddingBottom: 16 }}>
         <Text variant="largeTitle">{t('store.headline')}</Text>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Photo } from '@/types';
@@ -7,15 +7,15 @@ import { useTheme } from '@/theme';
 import { Text } from '@/components/ui';
 import { relativeTime } from '@/utils/time';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
-export const CARD_W = SCREEN_W - 32;
-export const CARD_H = Math.min(SCREEN_H * 0.66, CARD_W * 1.45);
-
 export interface SwipeCardProps {
   photo: Photo;
 }
 
-/** The photo surface for the swipe deck. Decision stamps are overlaid by the deck. */
+/**
+ * The photo surface for the swipe deck. Fills whatever frame the deck gives it
+ * (the deck measures its container — never the window, which on desktop web is
+ * far wider than the app frame). Decision stamps are overlaid by the deck.
+ */
 export function SwipeCard({ photo }: SwipeCardProps) {
   const theme = useTheme();
 
@@ -50,8 +50,7 @@ export function SwipeCard({ photo }: SwipeCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    width: CARD_W,
-    height: CARD_H,
+    flex: 1,
     overflow: 'hidden',
     backgroundColor: '#000',
   },
