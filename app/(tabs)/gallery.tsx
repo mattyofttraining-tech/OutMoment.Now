@@ -14,11 +14,12 @@ import { useTranslation } from '@/i18n/useTranslation';
 import type { Photo } from '@/types';
 import { exportPhotoToLibrary } from '@/services/media';
 import { haptics } from '@/utils/haptics';
+import { localizeQuestTitle } from '@/i18n/questTranslations';
 
 export default function GalleryScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const activeEventId = useAppStore((s) => s.activeEventId);
   const myEvents = useAppStore((s) => s.myEvents);
@@ -113,7 +114,7 @@ export default function GalleryScreen() {
                 </Text>
                 {viewer.caption ? (
                   <Text variant="caption" color="rgba(255,255,255,0.7)">
-                    {viewer.caption}
+                    {localizeQuestTitle(viewer.caption, locale)}
                   </Text>
                 ) : null}
               </View>

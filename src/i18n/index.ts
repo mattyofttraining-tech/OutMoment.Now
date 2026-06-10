@@ -27,3 +27,22 @@ export function deviceLocale(): LocaleCode {
 export function setI18nLocale(code: LocaleCode): void {
   i18n.locale = code;
 }
+
+const LANGUAGE_NAMES: Record<LocaleCode, string> = {
+  en: 'English',
+  de: 'German',
+  fr: 'French',
+  es: 'Spanish',
+  it: 'Italian',
+  nl: 'Dutch',
+  pt: 'Portuguese',
+  pl: 'Polish',
+  da: 'Danish',
+  sv: 'Swedish',
+};
+
+/** English name of the active UI language — sent to the AI quest generator so
+ *  generated quests come back in the host's language. */
+export function currentLanguageName(): string {
+  return LANGUAGE_NAMES[i18n.locale as LocaleCode] ?? 'English';
+}

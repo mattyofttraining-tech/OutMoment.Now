@@ -15,11 +15,12 @@ import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
 import { sound } from '@/utils/sound';
+import { localizeQuest } from '@/i18n/questTranslations';
 
 export default function CaptureScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { questId } = useLocalSearchParams<{ questId?: string }>();
   // Nudge the back button below Apple's Dynamic Island / curved bezel so it's
   // comfortably within thumb reach (the safe-area inset alone isn't enough).
@@ -51,8 +52,9 @@ export default function CaptureScreen() {
 
   const quest = useMemo(() => {
     if (!activeEventId || !questId) return undefined;
-    return (questsByEvent[activeEventId] ?? []).find((q) => q.id === questId);
-  }, [activeEventId, questId, questsByEvent]);
+    const found = (questsByEvent[activeEventId] ?? []).find((q) => q.id === questId);
+    return found ? localizeQuest(found, locale) : undefined;
+  }, [activeEventId, questId, questsByEvent, locale]);
 
   const handleUpload = useCallback(
     async (uri: string) => {

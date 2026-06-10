@@ -13,6 +13,7 @@ import type { Photo, SwipeDecision } from '@/types';
 import { motion } from '@/theme';
 import { Text } from '@/components/ui';
 import { haptics } from '@/utils/haptics';
+import { useTranslation } from '@/i18n/useTranslation';
 import { SwipeCard } from './SwipeCard';
 
 export interface SwipeDeckHandle {
@@ -40,6 +41,7 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
   { photos, onDecision, onIndexChange, onEmpty },
   ref,
 ) {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [box, setBox] = useState({ w: 0, h: 0 });
   const translateX = useSharedValue(0);
@@ -151,12 +153,12 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
                 {/* Decision stamps, driven by the same pan value. */}
                 <Animated.View style={[styles.stamp, styles.keepStamp, keepOverlay]} pointerEvents="none">
                   <Text variant="title2" weight="700" color="#34C759">
-                    KEEP
+                    {t('stamps.keep')}
                   </Text>
                 </Animated.View>
                 <Animated.View style={[styles.stamp, styles.passStamp, passOverlay]} pointerEvents="none">
                   <Text variant="title2" weight="700" color="#FF453A">
-                    LET GO
+                    {t('stamps.letGo')}
                   </Text>
                 </Animated.View>
               </View>

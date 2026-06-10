@@ -32,10 +32,29 @@ Rules you MUST follow:
 
 Output ONLY a JSON array of 10 objects with keys "icon", "title", "prompt". No prose, no markdown, no code fences.`;
 
+/** Languages the app ships; anything else falls back to English. */
+const ALLOWED_LANGUAGES = new Set([
+  'English',
+  'German',
+  'French',
+  'Spanish',
+  'Italian',
+  'Dutch',
+  'Portuguese',
+  'Polish',
+  'Danish',
+  'Swedish',
+]);
+
+export function sanitizeLanguage(language: unknown): string {
+  return typeof language === 'string' && ALLOWED_LANGUAGES.has(language) ? language : 'English';
+}
+
 export async function generateQuestsWithAI(
   apiKey: string,
   brief: string,
   eventType: string,
+  language = 'English',
 ): Promise<GeneratedQuest[]> {
   const client = new Anthropic({ apiKey });
 
@@ -46,7 +65,7 @@ export async function generateQuestsWithAI(
     messages: [
       {
         role: 'user',
-        content: `Event type: ${eventType}\nHost's description: ${brief}\n\nGenerate the 10 quests as a JSON array.`,
+        content: `Event type: ${eventType}\nHost's description: ${brief}\nWrite every "title" and "prompt" in ${language}.\n\nGenerate the 10 quests as a JSON array.`,
       },
     ],
   });

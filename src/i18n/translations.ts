@@ -39,7 +39,22 @@ export const translations = {
       copiedBody: 'The invite is on your clipboard — paste it anywhere.',
       shareMessage:
         'Join our OurMoment event "%{title}" — enter code %{code} in the app to add your photos.',
+      guest: 'Guest',
     },
+    countdown: {
+      passed: 'This moment has passed',
+      expiresDays: 'Expires in %{count} days',
+      expiresDay: 'Expires in 1 day',
+      expiresHours: 'Expires in %{count} h',
+      expiresMins: 'Expires in %{count} min',
+    },
+    time: {
+      justNow: 'just now',
+      minutesAgo: '%{count}m ago',
+      hoursAgo: '%{count}h ago',
+      daysAgo: '%{count}d ago',
+    },
+    stamps: { keep: 'KEEP', letGo: 'LET GO' },
     pricing: { from: 'from %{price}' },
     tiers: {
       intimate: { label: 'Intimate', blurb: 'Up to 25 guests' },
@@ -283,7 +298,22 @@ export const translations = {
       copiedBody: 'Die Einladung ist in deiner Zwischenablage – füge sie überall ein.',
       shareMessage:
         'Mach mit bei unserem OurMoment-Event "%{title}" – gib den Code %{code} in der App ein, um deine Fotos hinzuzufügen.',
+      guest: 'Gast',
     },
+    countdown: {
+      passed: 'Dieser Moment ist vorbei',
+      expiresDays: 'Läuft in %{count} Tagen ab',
+      expiresDay: 'Läuft in 1 Tag ab',
+      expiresHours: 'Läuft in %{count} Std. ab',
+      expiresMins: 'Läuft in %{count} Min. ab',
+    },
+    time: {
+      justNow: 'gerade eben',
+      minutesAgo: 'vor %{count} Min.',
+      hoursAgo: 'vor %{count} Std.',
+      daysAgo: 'vor %{count} T.',
+    },
+    stamps: { keep: 'BEHALTEN', letGo: 'LOSLASSEN' },
     pricing: { from: 'ab %{price}' },
     tiers: {
       intimate: { label: 'Intim', blurb: 'Bis zu 25 Gäste' },
@@ -527,7 +557,22 @@ export const translations = {
       copiedBody: 'L’invitation est dans votre presse-papiers — collez-la où vous voulez.',
       shareMessage:
         'Rejoignez notre événement OurMoment « %{title} » — saisissez le code %{code} dans l’app pour ajouter vos photos.',
+      guest: 'Invité',
     },
+    countdown: {
+      passed: 'Ce moment est passé',
+      expiresDays: 'Expire dans %{count} jours',
+      expiresDay: 'Expire dans 1 jour',
+      expiresHours: 'Expire dans %{count} h',
+      expiresMins: 'Expire dans %{count} min',
+    },
+    time: {
+      justNow: 'à l’instant',
+      minutesAgo: 'il y a %{count} min',
+      hoursAgo: 'il y a %{count} h',
+      daysAgo: 'il y a %{count} j',
+    },
+    stamps: { keep: 'GARDER', letGo: 'LAISSER' },
     pricing: { from: 'dès %{price}' },
     tiers: {
       intimate: { label: 'Intime', blurb: 'Jusqu’à 25 invités' },
@@ -771,7 +816,22 @@ export const translations = {
       copiedBody: 'La invitación está en tu portapapeles: pégala donde quieras.',
       shareMessage:
         'Únete a nuestro evento de OurMoment «%{title}»: introduce el código %{code} en la app para añadir tus fotos.',
+      guest: 'Invitado',
     },
+    countdown: {
+      passed: 'Este momento ya pasó',
+      expiresDays: 'Caduca en %{count} días',
+      expiresDay: 'Caduca en 1 día',
+      expiresHours: 'Caduca en %{count} h',
+      expiresMins: 'Caduca en %{count} min',
+    },
+    time: {
+      justNow: 'justo ahora',
+      minutesAgo: 'hace %{count} min',
+      hoursAgo: 'hace %{count} h',
+      daysAgo: 'hace %{count} d',
+    },
+    stamps: { keep: 'GUARDAR', letGo: 'SOLTAR' },
     pricing: { from: 'desde %{price}' },
     tiers: {
       intimate: { label: 'Íntimo', blurb: 'Hasta 25 invitados' },
@@ -1015,7 +1075,22 @@ export const translations = {
       copiedBody: 'L’invito è negli appunti: incollalo dove vuoi.',
       shareMessage:
         'Unisciti al nostro evento OurMoment "%{title}": inserisci il codice %{code} nell’app per aggiungere le tue foto.',
+      guest: 'Ospite',
     },
+    countdown: {
+      passed: 'Questo momento è passato',
+      expiresDays: 'Scade tra %{count} giorni',
+      expiresDay: 'Scade tra 1 giorno',
+      expiresHours: 'Scade tra %{count} h',
+      expiresMins: 'Scade tra %{count} min',
+    },
+    time: {
+      justNow: 'proprio ora',
+      minutesAgo: '%{count} min fa',
+      hoursAgo: '%{count} h fa',
+      daysAgo: '%{count} g fa',
+    },
+    stamps: { keep: 'TIENI', letGo: 'LASCIA' },
     pricing: { from: 'da %{price}' },
     tiers: {
       intimate: { label: 'Intimo', blurb: 'Fino a 25 ospiti' },
@@ -1259,7 +1334,22 @@ export const translations = {
       copiedBody: 'De uitnodiging staat op je klembord — plak hem waar je wilt.',
       shareMessage:
         'Doe mee met ons OurMoment-event "%{title}" — voer code %{code} in de app in om je foto’s toe te voegen.',
+      guest: 'Gast',
     },
+    countdown: {
+      passed: 'Dit moment is voorbij',
+      expiresDays: 'Verloopt over %{count} dagen',
+      expiresDay: 'Verloopt over 1 dag',
+      expiresHours: 'Verloopt over %{count} u',
+      expiresMins: 'Verloopt over %{count} min',
+    },
+    time: {
+      justNow: 'zojuist',
+      minutesAgo: '%{count} min geleden',
+      hoursAgo: '%{count} u geleden',
+      daysAgo: '%{count} d geleden',
+    },
+    stamps: { keep: 'BEWAREN', letGo: 'LOSLATEN' },
     pricing: { from: 'vanaf %{price}' },
     tiers: {
       intimate: { label: 'Intiem', blurb: 'Tot 25 gasten' },
@@ -1503,7 +1593,22 @@ export const translations = {
       copiedBody: 'O convite está na sua área de transferência — cole onde quiser.',
       shareMessage:
         'Junte-se ao nosso evento OurMoment "%{title}" — introduza o código %{code} na app para adicionar as suas fotos.',
+      guest: 'Convidado',
     },
+    countdown: {
+      passed: 'Este momento já passou',
+      expiresDays: 'Expira em %{count} dias',
+      expiresDay: 'Expira em 1 dia',
+      expiresHours: 'Expira em %{count} h',
+      expiresMins: 'Expira em %{count} min',
+    },
+    time: {
+      justNow: 'agora mesmo',
+      minutesAgo: 'há %{count} min',
+      hoursAgo: 'há %{count} h',
+      daysAgo: 'há %{count} d',
+    },
+    stamps: { keep: 'GUARDAR', letGo: 'LARGAR' },
     pricing: { from: 'desde %{price}' },
     tiers: {
       intimate: { label: 'Íntimo', blurb: 'Até 25 convidados' },
@@ -1747,7 +1852,22 @@ export const translations = {
       copiedBody: 'Zaproszenie jest w schowku — wklej je, gdzie chcesz.',
       shareMessage:
         'Dołącz do naszego wydarzenia OurMoment „%{title}” — wpisz kod %{code} w aplikacji, aby dodać swoje zdjęcia.',
+      guest: 'Gość',
     },
+    countdown: {
+      passed: 'Ta chwila minęła',
+      expiresDays: 'Wygasa za %{count} dni',
+      expiresDay: 'Wygasa za 1 dzień',
+      expiresHours: 'Wygasa za %{count} godz.',
+      expiresMins: 'Wygasa za %{count} min',
+    },
+    time: {
+      justNow: 'przed chwilą',
+      minutesAgo: '%{count} min temu',
+      hoursAgo: '%{count} godz. temu',
+      daysAgo: '%{count} dni temu',
+    },
+    stamps: { keep: 'ZATRZYMAJ', letGo: 'ODPUŚĆ' },
     pricing: { from: 'od %{price}' },
     tiers: {
       intimate: { label: 'Kameralne', blurb: 'Do 25 gości' },
@@ -1991,7 +2111,22 @@ export const translations = {
       copiedBody: 'Invitationen ligger i din udklipsholder — indsæt den hvor som helst.',
       shareMessage:
         'Vær med til vores OurMoment-event "%{title}" — indtast koden %{code} i appen for at tilføje dine billeder.',
+      guest: 'Gæst',
     },
+    countdown: {
+      passed: 'Dette øjeblik er forbi',
+      expiresDays: 'Udløber om %{count} dage',
+      expiresDay: 'Udløber om 1 dag',
+      expiresHours: 'Udløber om %{count} t.',
+      expiresMins: 'Udløber om %{count} min.',
+    },
+    time: {
+      justNow: 'lige nu',
+      minutesAgo: '%{count} min siden',
+      hoursAgo: '%{count} t siden',
+      daysAgo: '%{count} d siden',
+    },
+    stamps: { keep: 'BEHOLD', letGo: 'GIV SLIP' },
     pricing: { from: 'fra %{price}' },
     tiers: {
       intimate: { label: 'Intim', blurb: 'Op til 25 gæster' },
@@ -2235,7 +2370,22 @@ export const translations = {
       copiedBody: 'Inbjudan ligger i urklipp — klistra in den var du vill.',
       shareMessage:
         'Gå med i vårt OurMoment-event "%{title}" — ange koden %{code} i appen för att lägga till dina bilder.',
+      guest: 'Gäst',
     },
+    countdown: {
+      passed: 'Det här ögonblicket har passerat',
+      expiresDays: 'Går ut om %{count} dagar',
+      expiresDay: 'Går ut om 1 dag',
+      expiresHours: 'Går ut om %{count} tim',
+      expiresMins: 'Går ut om %{count} min',
+    },
+    time: {
+      justNow: 'nyss',
+      minutesAgo: '%{count} min sedan',
+      hoursAgo: '%{count} tim sedan',
+      daysAgo: '%{count} d sedan',
+    },
+    stamps: { keep: 'BEHÅLL', letGo: 'SLÄPP' },
     pricing: { from: 'från %{price}' },
     tiers: {
       intimate: { label: 'Intim', blurb: 'Upp till 25 gäster' },

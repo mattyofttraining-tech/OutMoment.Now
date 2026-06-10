@@ -38,6 +38,7 @@ import {
   getFirebaseStorage,
 } from '@/lib/firebase/app';
 import { generateQuestsLocally } from './questGenerator';
+import { currentLanguageName } from '@/i18n';
 import type { AuthUser, CreateEventInput, DataService } from './dataService';
 
 /**
@@ -88,11 +89,12 @@ export class FirebaseDataService implements DataService {
   }
 
   async createEvent(input: CreateEventInput): Promise<OurEvent> {
-    const callable = httpsCallable<CreateEventInput, { event: OurEvent }>(
+    const callable = httpsCallable<CreateEventInput & { language: string }, { event: OurEvent }>(
       getFirebaseFunctions(),
       'createEvent',
     );
-    const { data } = await callable(input);
+    // language: AI-generated quests are written in the host's UI language.
+    const { data } = await callable({ ...input, language: currentLanguageName() });
     return data.event;
   }
 
@@ -201,10 +203,10 @@ export class FirebaseDataService implements DataService {
   async generateQuests(brief: string, eventType: EventType): Promise<Quest[]> {
     try {
       const callable = httpsCallable<
-        { brief: string; eventType: EventType },
+        { brief: string; eventType: EventType; language: string },
         { quests: Quest[] }
       >(getFirebaseFunctions(), 'generateQuests');
-      const { data } = await callable({ brief, eventType });
+      const { data } = await callable({ brief, eventType, language: currentLanguageName() });
       if (Array.isArray(data.quests) && data.quests.length >= 6) return data.quests;
       throw new Error('AI returned too few quests.');
     } catch {

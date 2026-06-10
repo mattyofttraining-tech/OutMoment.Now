@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useTheme } from '@/theme';
 import { Text } from './ui/Text';
-import { countdownLabel, getCountdown, isUrgent } from '@/utils/time';
+import { countdownParts, getCountdown, isUrgent } from '@/utils/time';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export interface CountdownBadgeProps {
   expiresAt: number;
@@ -16,6 +17,7 @@ export interface CountdownBadgeProps {
  */
 export function CountdownBadge({ expiresAt, prominent = false }: CountdownBadgeProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -48,7 +50,10 @@ export function CountdownBadge({ expiresAt, prominent = false }: CountdownBadgeP
         }}
       />
       <Text variant={prominent ? 'subhead' : 'caption'} weight="600" color={tint}>
-        {c.expired ? 'This moment has passed' : `Expires in ${countdownLabel(c).replace(' left', '')}`}
+        {(() => {
+          const { key, count } = countdownParts(c);
+          return t(key, { count });
+        })()}
       </Text>
     </View>
   );

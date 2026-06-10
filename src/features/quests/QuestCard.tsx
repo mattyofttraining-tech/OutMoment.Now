@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import type { Quest } from '@/types';
 import { useTheme } from '@/theme';
 import { Card, PressableScale, Text } from '@/components/ui';
+import { useTranslation } from '@/i18n/useTranslation';
+import { localizeQuest } from '@/i18n/questTranslations';
 
 export interface QuestCardProps {
   quest: Quest;
@@ -12,8 +14,10 @@ export interface QuestCardProps {
 }
 
 /** A single photo prompt. A gentle nudge, never a chore. */
-export function QuestCard({ quest, completedByMe, onPress }: QuestCardProps) {
+export function QuestCard({ quest: rawQuest, completedByMe, onPress }: QuestCardProps) {
   const theme = useTheme();
+  const { locale } = useTranslation();
+  const quest = localizeQuest(rawQuest, locale);
   return (
     <PressableScale onPress={onPress} activeScale={0.98} haptic style={{ marginBottom: theme.spacing.sm }}>
       <Card padded={false} style={{ padding: theme.spacing.md, opacity: completedByMe ? 0.7 : 1 }}>

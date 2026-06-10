@@ -15,7 +15,7 @@ import { shareMessage } from '@/utils/share';
 export default function HostScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const uid = useAppStore((s) => s.uid);
   const activeEventId = useAppStore((s) => s.activeEventId);
@@ -46,7 +46,7 @@ export default function HostScreen() {
     // Top contributors by photo count.
     const counts = new Map<string, number>();
     for (const p of photos) counts.set(p.uploaderUid, (counts.get(p.uploaderUid) ?? 0) + 1);
-    const nameFor = (id: string) => members.find((m) => m.uid === id)?.displayName ?? 'Guest';
+    const nameFor = (id: string) => members.find((m) => m.uid === id)?.displayName ?? t('common.guest');
     const colorFor = (id: string) => members.find((m) => m.uid === id)?.avatarColor;
     const leaders = [...counts.entries()]
       .map(([id, n]) => ({ id, name: nameFor(id), color: colorFor(id), count: n }))
@@ -64,7 +64,8 @@ export default function HostScreen() {
       leaders,
       recent,
     };
-  }, [event, membersByEvent, questsByEvent, photosByEvent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` is stable per locale
+  }, [event, membersByEvent, questsByEvent, photosByEvent, locale]);
 
   if (!event || !stats) {
     return (

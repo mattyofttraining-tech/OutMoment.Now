@@ -7,7 +7,7 @@ import { defineSecret } from 'firebase-functions/params';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { logger } from 'firebase-functions';
 import { QUEST_PACKS, makeJoinCode, coverFor } from './questPacks';
-import { generateQuestsWithAI } from './quests';
+import { generateQuestsWithAI, sanitizeLanguage } from './quests';
 import { priceCents, type GuestTierId } from './pricing';
 
 initializeApp();
@@ -46,6 +46,8 @@ interface CreateEventData {
   guestTier?: GuestTierId;
   /** Stripe Checkout session that paid for this booking. */
   checkoutSessionId?: string;
+  /** Host's UI language — AI quests are written in it. */
+  language?: string;
 }
 
 const VALID_TYPES = ['marriage', 'confirmation', 'baptism', 'birthday', 'special'];
@@ -107,7 +109,12 @@ export const createEvent = onCall(
   let quests = QUEST_PACKS[type] ?? QUEST_PACKS.special;
   if (data.aiBrief && data.aiBrief.trim().length >= 8) {
     try {
-      const ai = await generateQuestsWithAI(ANTHROPIC_API_KEY.value(), data.aiBrief.trim(), type);
+      const ai = await generateQuestsWithAI(
+        ANTHROPIC_API_KEY.value(),
+        data.aiBrief.trim(),
+        type,
+        sanitizeLanguage(data.language),
+      );
       quests = ai;
     } catch (err) {
       logger.warn('AI quest generation failed; using curated pack.', err);
@@ -187,12 +194,14 @@ export const joinEvent = onCall(async (request) => {
 interface GenerateQuestsData {
   brief: string;
   eventType: string;
+  /** Host's UI language — AI quests are written in it. */
+  language?: string;
 }
 
 /** Standalone AI quest preview (used to boost any event type). */
 export const generateQuests = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (request) => {
   if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in first.');
-  const { brief, eventType } = request.data as GenerateQuestsData;
+  const { brief, eventType, language } = request.data as GenerateQuestsData;
   if (!brief || brief.trim().length < 8) {
     throw new HttpsError('invalid-argument', 'Tell us a bit more about your event.');
   }
@@ -200,6 +209,7 @@ export const generateQuests = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (re
     ANTHROPIC_API_KEY.value(),
     brief.trim(),
     VALID_TYPES.includes(eventType) ? eventType : 'special',
+    sanitizeLanguage(language),
   );
   return {
     quests: quests.map((q, i) => ({

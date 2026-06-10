@@ -29,13 +29,13 @@ export function getCountdown(expiresAt: number, now = Date.now()): Countdown {
   };
 }
 
-/** Short human label, e.g. "29 days left", "6 hours left", "Expired". */
-export function countdownLabel(c: Countdown): string {
-  if (c.expired) return 'Expired';
-  if (c.days >= 2) return `${c.days} days left`;
-  if (c.days === 1) return '1 day left';
-  if (c.hours >= 1) return `${c.hours} ${c.hours === 1 ? 'hour' : 'hours'} left`;
-  return `${c.minutes} min left`;
+/** i18n key + count for the countdown label; render with t(key, { count }). */
+export function countdownParts(c: Countdown): { key: string; count: number } {
+  if (c.expired) return { key: 'countdown.passed', count: 0 };
+  if (c.days >= 2) return { key: 'countdown.expiresDays', count: c.days };
+  if (c.days === 1) return { key: 'countdown.expiresDay', count: 1 };
+  if (c.hours >= 1) return { key: 'countdown.expiresHours', count: c.hours };
+  return { key: 'countdown.expiresMins', count: c.minutes };
 }
 
 /** True once the moment is in its final stretch and saving becomes urgent. */
@@ -43,13 +43,13 @@ export function isUrgent(c: Countdown): boolean {
   return !c.expired && c.days <= 3;
 }
 
-export function relativeTime(ts: number, now = Date.now()): string {
+/** i18n key + count for "x ago" labels; render with t(key, { count }). */
+export function relativeTimeParts(ts: number, now = Date.now()): { key: string; count: number } {
   const diff = now - ts;
   const m = Math.floor(diff / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return { key: 'time.justNow', count: 0 };
+  if (m < 60) return { key: 'time.minutesAgo', count: m };
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  return `${d}d ago`;
+  if (h < 24) return { key: 'time.hoursAgo', count: h };
+  return { key: 'time.daysAgo', count: Math.floor(h / 24) };
 }

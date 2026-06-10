@@ -5,7 +5,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Photo } from '@/types';
 import { useTheme } from '@/theme';
 import { Text } from '@/components/ui';
-import { relativeTime } from '@/utils/time';
+import { relativeTimeParts } from '@/utils/time';
+import { useTranslation } from '@/i18n/useTranslation';
+import { localizeQuestTitle } from '@/i18n/questTranslations';
 
 export interface SwipeCardProps {
   photo: Photo;
@@ -18,6 +20,8 @@ export interface SwipeCardProps {
  */
 export function SwipeCard({ photo }: SwipeCardProps) {
   const theme = useTheme();
+  const { t, locale } = useTranslation();
+  const ago = relativeTimeParts(photo.createdAt);
 
   return (
     <View style={[styles.card, theme.shadows.xl, { borderRadius: theme.radius.xxl }]}>
@@ -40,8 +44,8 @@ export function SwipeCard({ photo }: SwipeCardProps) {
           {photo.uploaderName}
         </Text>
         <Text variant="footnote" color="rgba(255,255,255,0.7)">
-          {photo.caption ? `${photo.caption} · ` : ''}
-          {relativeTime(photo.createdAt)}
+          {photo.caption ? `${localizeQuestTitle(photo.caption, locale)} · ` : ''}
+          {t(ago.key, { count: ago.count })}
         </Text>
       </View>
     </View>
