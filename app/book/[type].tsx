@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Badge, BrandMark, Button, Card, dialog, IconButton, PressableScale, Text } from '@/components/ui';
 import { getWorld } from '@/data/eventWorlds';
-import { GUEST_TIERS, formatPrice, priceFor } from '@/data/pricing';
+import { GUEST_TIERS, deviceCurrency, formatPrice, priceFor } from '@/data/pricing';
 import type { EventType, GuestTierId, OurEvent } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -21,7 +21,7 @@ import { shareMessage } from '@/utils/share';
 export default function BookScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { type } = useLocalSearchParams<{ type: EventType }>();
   const world = getWorld((type ?? 'special') as EventType);
 
@@ -35,7 +35,9 @@ export default function BookScreen() {
   const [loading, setLoading] = useState(false);
   const [created, setCreated] = useState<OurEvent | null>(null);
 
-  const price = priceFor(world.type, guestTier);
+  // Resolved once so the displayed price and the charged price can't diverge.
+  const currency = useMemo(deviceCurrency, []);
+  const price = priceFor(world.type, guestTier, currency);
 
   const canBook = title.trim().length >= 2 && (!world.aiPowered || brief.trim().length >= 8);
 
@@ -54,7 +56,7 @@ export default function BookScreen() {
           guestTier,
         });
       }
-      const checkout = await startCheckout(world.type, title.trim(), guestTier);
+      const checkout = await startCheckout(world.type, title.trim(), guestTier, currency);
       if (checkout.status === 'redirecting') return; // page is navigating to Stripe
       if (checkout.status === 'cancelled') {
         setLoading(false);
@@ -261,7 +263,7 @@ export default function BookScreen() {
                           {t(`tiers.${tier.id}.blurb`)}
                         </Text>
                       </View>
-                      <Text variant="title3">{formatPrice(priceFor(world.type, tier.id))}</Text>
+                      <Text variant="title3">{formatPrice(priceFor(world.type, tier.id, currency), currency, locale)}</Text>
                     </View>
                   </Card>
                 </PressableScale>
@@ -273,9 +275,9 @@ export default function BookScreen() {
         <Animated.View entering={FadeInDown} style={[styles.footer, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.border }]}>
           <View style={{ flex: 1 }}>
             <Text variant="caption" dim>
-              {t('book.oneTime')}
+              {t('book.oneTime')} · {t('book.vatIncluded')}
             </Text>
-            <Text variant="title2">{formatPrice(price)}</Text>
+            <Text variant="title2">{formatPrice(price, currency, locale)}</Text>
           </View>
           <Button label={t('book.book')} fullWidth={false} loading={loading} disabled={!canBook} onPress={onBook} style={{ minWidth: 160 }} />
         </Animated.View>

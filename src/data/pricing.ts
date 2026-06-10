@@ -1,5 +1,6 @@
 import type { EventType, GuestTierId } from '@/types';
 import { EVENT_WORLDS } from './eventWorlds';
+import { CURRENCY_RATES, type CurrencyCode } from './currency';
 
 /**
  * Dynamic, size-based pricing.
@@ -46,25 +47,28 @@ export function getTier(id: GuestTierId): GuestTier {
   return GUEST_TIERS.find((t) => t.id === id) ?? GUEST_TIERS[0]!;
 }
 
-/** Round to a charming $X9 price point (e.g. 142 → 139, 70 → 69). */
+/** Round to a charming X9 price point (e.g. 142 → 139, 70 → 69). */
 function charm(amount: number): number {
   return Math.max(9, Math.round(amount / 10) * 10 - 1);
 }
 
-/** Whole-dollar price for an event world at a given guest tier. */
-export function priceFor(type: EventType, tierId: GuestTierId): number {
+/**
+ * Whole-unit price for an event world at a given guest tier, in the given
+ * currency. Base prices are EUR; other currencies use the pegged rates in
+ * src/data/currency.ts, charm-rounded. Mirrored in functions/src/pricing.ts —
+ * the server independently recomputes and enforces this exact amount.
+ */
+export function priceFor(type: EventType, tierId: GuestTierId, currency: CurrencyCode): number {
   const base = EVENT_WORLDS[type].basePrice;
-  return charm(base * getTier(tierId).multiplier);
+  return charm(base * getTier(tierId).multiplier * CURRENCY_RATES[currency]);
 }
 
-/** Cents, for Stripe. */
-export function priceCents(type: EventType, tierId: GuestTierId): number {
-  return priceFor(type, tierId) * 100;
+/** Smallest currency unit (cents/øre/pence), for Stripe. */
+export function priceCents(type: EventType, tierId: GuestTierId, currency: CurrencyCode): number {
+  return priceFor(type, tierId, currency) * 100;
 }
 
-export function formatPrice(amount: number, currency = '€'): string {
-  return `${currency}${amount.toLocaleString('en-IE')}`;
-}
+export { deviceCurrency, formatPrice, type CurrencyCode } from './currency';
 
 // The "from €X" store-card label lives in i18n (`pricing.from`) so it can be
 // translated; compose it with t('pricing.from', { price: formatPrice(...) }).

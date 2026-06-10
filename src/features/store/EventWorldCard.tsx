@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import type { EventWorld } from '@/types';
 import { motion, useTheme } from '@/theme';
 import { Badge, PressableScale, Text } from '@/components/ui';
-import { formatPrice, priceFor } from '@/data/pricing';
+import { deviceCurrency, formatPrice, priceFor } from '@/data/pricing';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export interface EventWorldCardProps {
@@ -20,7 +20,8 @@ export interface EventWorldCardProps {
  */
 export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const currency = React.useMemo(deviceCurrency, []);
   const tilt = useSharedValue(0);
 
   const tiltStyle = useAnimatedStyle(() => ({
@@ -53,7 +54,7 @@ export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
         <View style={styles.top}>
           {world.aiPowered ? <Badge label={t('worlds.aiBadge')} icon="✨" bg="rgba(255,255,255,0.16)" color="#fff" /> : <View />}
           <Badge
-            label={t('pricing.from', { price: formatPrice(priceFor(world.type, 'intimate')) })}
+            label={t('pricing.from', { price: formatPrice(priceFor(world.type, 'intimate', currency), currency, locale) })}
             bg="rgba(255,255,255,0.16)"
             color="#fff"
           />

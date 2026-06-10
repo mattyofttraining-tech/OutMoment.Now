@@ -8,7 +8,8 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 import { logger } from 'firebase-functions';
 import { QUEST_PACKS, makeJoinCode, coverFor } from './questPacks';
 import { generateQuestsWithAI, sanitizeLanguage } from './quests';
-import { priceCents, type GuestTierId } from './pricing';
+import { priceCents, isSupportedCurrency, type CurrencyCode, type GuestTierId } from './pricing';
+import type Stripe from 'stripe';
 
 initializeApp();
 const db = getFirestore();
@@ -230,7 +231,14 @@ interface CheckoutData {
   platform?: 'web' | 'native';
   /** The PWA's origin (validated against WEB_ORIGINS). */
   webOrigin?: string;
+  /** Device currency (validated against the supported set; defaults to EUR). */
+  currency?: string;
+  /** UI language — localizes the Stripe Checkout page. */
+  language?: string;
 }
+
+/** App locales Stripe Checkout can render natively. */
+const STRIPE_CHECKOUT_LOCALES = new Set(['da', 'de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'sv']);
 
 /**
  * Create a Stripe Checkout session for a booking. Price scales with the chosen
@@ -242,7 +250,8 @@ interface CheckoutData {
  */
 export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, async (request) => {
   if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in first.');
-  const { eventType, title, guestTier, platform, webOrigin } = request.data as CheckoutData;
+  const { eventType, title, guestTier, platform, webOrigin, currency, language } =
+    request.data as CheckoutData;
 
   const key = STRIPE_SECRET_KEY.value();
   if (!key) {
@@ -250,7 +259,13 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
   }
 
   const tier: GuestTierId = guestTier || 'intimate';
-  const amount = priceCents(eventType, tier);
+  // The amount is always priced server-side from the canonical table; the
+  // client only chooses which supported currency to price in.
+  const cur: CurrencyCode = isSupportedCurrency(currency) ? currency : 'EUR';
+  const amount = priceCents(eventType, tier, cur);
+  const checkoutLocale = (
+    language && STRIPE_CHECKOUT_LOCALES.has(language) ? language : 'auto'
+  ) as Stripe.Checkout.SessionCreateParams.Locale;
 
   // Where Checkout sends the user afterwards. {CHECKOUT_SESSION_ID} is
   // substituted by Stripe so the app can verify the exact session it paid for.
@@ -271,14 +286,15 @@ export const createCheckoutSession = onCall({ secrets: [STRIPE_SECRET_KEY] }, as
       {
         quantity: 1,
         price_data: {
-          currency: 'eur',
+          currency: cur.toLowerCase(),
           unit_amount: amount,
           product_data: { name: `OurMoment — ${title || 'Event'} (${tier})` },
         },
       },
     ],
+    locale: checkoutLocale,
     payment_intent_data: { statement_descriptor: 'OURMOMENT' },
-    metadata: { uid: request.auth.uid, eventType, guestTier: tier },
+    metadata: { uid: request.auth.uid, eventType, guestTier: tier, currency: cur },
   });
 
   return { url: session.url, sessionId: session.id };
@@ -366,6 +382,13 @@ async function verifyAndConsumePayment(
       'failed-precondition',
       'This payment was for a different event type or guest tier.',
     );
+  }
+
+  // The paid total must equal the canonical price for this type/tier in the
+  // session's currency — charged amount always matches the advertised price.
+  const paidCurrency = (session.currency ?? '').toUpperCase();
+  if (!isSupportedCurrency(paidCurrency) || session.amount_total !== priceCents(eventType, tier, paidCurrency)) {
+    throw new HttpsError('failed-precondition', 'Paid amount does not match the booking price.');
   }
 
   // Single use: atomically flip consumed on payments/{sessionId}.

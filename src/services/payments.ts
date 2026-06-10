@@ -4,6 +4,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { httpsCallable } from 'firebase/functions';
 import { getFirebaseFunctions } from '@/lib/firebase/app';
 import { isDemoMode } from '@/lib/firebase/config';
+import { i18n } from '@/i18n';
+import type { CurrencyCode } from '@/data/currency';
 import type { EventType, GuestTierId } from '@/types';
 
 /**
@@ -39,6 +41,7 @@ export async function startCheckout(
   eventType: EventType,
   title: string,
   guestTier: GuestTierId,
+  currency: CurrencyCode,
 ): Promise<CheckoutResult> {
   if (isDemoMode) {
     // Simulate a successful purchase.
@@ -53,9 +56,15 @@ export async function startCheckout(
       guestTier: GuestTierId;
       platform: 'web' | 'native';
       webOrigin?: string;
+      /** Same currency the booking screen displayed — the server prices in it. */
+      currency: CurrencyCode;
+      /** UI language, so the Stripe Checkout page matches the app. */
+      language: string;
     },
     { url: string; sessionId: string }
   >(getFirebaseFunctions(), 'createCheckoutSession');
+
+  const language = i18n.locale;
 
   if (Platform.OS === 'web') {
     const { data } = await callable({
@@ -64,13 +73,15 @@ export async function startCheckout(
       guestTier,
       platform: 'web',
       webOrigin: window.location.origin,
+      currency,
+      language,
     });
     // Full-page navigation — an in-app browser session can't return to a PWA.
     window.location.assign(data.url);
     return { status: 'redirecting' };
   }
 
-  const { data } = await callable({ eventType, title, guestTier, platform: 'native' });
+  const { data } = await callable({ eventType, title, guestTier, platform: 'native', currency, language });
   const result = await WebBrowser.openAuthSessionAsync(data.url, 'ourmoment://checkout-complete');
   if (result.type === 'success') {
     const sessionId = new URL(result.url).searchParams.get('session_id') ?? data.sessionId;
