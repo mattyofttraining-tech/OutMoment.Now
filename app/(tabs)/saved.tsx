@@ -7,6 +7,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useTheme } from '@/theme';
 import { BrandMark, dialog, EmptyState, IconButton, PressableScale, Text } from '@/components/ui';
+import { FirstRunTip } from '@/components/FirstRunTip';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { haptics } from '@/utils/haptics';
@@ -156,6 +157,8 @@ export default function SavedScreen() {
           )}
         />
       </SafeAreaView>
+
+      <FirstRunTip tipKey="saved" />
     </View>
   );
 }

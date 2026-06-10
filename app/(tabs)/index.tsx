@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, useThemeControls } from '@/theme';
 import { Badge, BrandMark, Button, Card, EmptyState, IconButton, PressableScale, ProgressRing, Text } from '@/components/ui';
+import { FirstRunTip } from '@/components/FirstRunTip';
 import { EventHero } from '@/features/event/EventHero';
 import { QuestCard } from '@/features/quests/QuestCard';
 import { useAppStore } from '@/store/useAppStore';
@@ -166,6 +167,8 @@ export default function MomentScreen() {
           ) : null}
         </ScrollView>
       </SafeAreaView>
+
+      <FirstRunTip tipKey="moment" />
     </View>
   );
 }

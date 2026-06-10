@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { BrandMark, Button, EmptyState, IconButton, Text } from '@/components/ui';
 import { CountdownBadge } from '@/components/CountdownBadge';
+import { FirstRunTip } from '@/components/FirstRunTip';
 import { PhotoGrid } from '@/features/gallery/PhotoGrid';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -96,6 +97,8 @@ export default function GalleryScreen() {
           }
         />
       </SafeAreaView>
+
+      <FirstRunTip tipKey="gallery" />
 
       {/* Lightweight full-screen viewer */}
       <Modal visible={!!viewer} transparent animationType="fade" onRequestClose={() => setViewer(null)}>
