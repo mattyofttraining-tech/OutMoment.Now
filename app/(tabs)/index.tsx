@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -19,6 +19,9 @@ export default function MomentScreen() {
   const router = useRouter();
   const { setAccent } = useThemeControls();
   const { t } = useTranslation();
+
+  // Quest list folds to 4 by default; "See all quests" expands it in place.
+  const [showAllQuests, setShowAllQuests] = useState(false);
 
   const uid = useAppStore((s) => s.uid);
   const activeEventId = useAppStore((s) => s.activeEventId);
@@ -124,7 +127,7 @@ export default function MomentScreen() {
           </View>
 
           <View style={{ marginTop: 14 }}>
-            {quests.slice(0, 4).map((q) => (
+            {(showAllQuests ? quests : quests.slice(0, 4)).map((q) => (
               <QuestCard
                 key={q.id}
                 quest={q}
@@ -133,9 +136,13 @@ export default function MomentScreen() {
               />
             ))}
             {quests.length > 4 ? (
-              <PressableScale onPress={() => router.push('/(tabs)/gallery')} style={{ paddingVertical: 10, alignItems: 'center' }}>
+              <PressableScale
+                onPress={() => setShowAllQuests((v) => !v)}
+                haptic
+                style={{ paddingVertical: 10, alignItems: 'center' }}
+              >
                 <Text variant="subhead" color={theme.colors.accent}>
-                  {t('home.seeAllQuests')}
+                  {showAllQuests ? t('home.showFewerQuests') : t('home.seeAllQuests')}
                 </Text>
               </PressableScale>
             ) : null}
