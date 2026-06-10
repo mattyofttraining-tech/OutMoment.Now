@@ -80,7 +80,16 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (fontsReady && ready) SplashScreen.hideAsync().catch(() => {});
+    if (!fontsReady || !ready) return;
+    SplashScreen.hideAsync().catch(() => {});
+    // Web: fade out the static splash from +html.tsx now that the app renders.
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        setTimeout(() => splash.remove(), 350);
+      }
+    }
   }, [fontsReady, ready]);
 
   // Rendered even while loading so the static export bakes the page title in.
