@@ -90,9 +90,12 @@ async function main() {
       'Content-Type': 'application/x-www-form-urlencoded',
     });
   } catch (err) {
-    if (/only live keys/i.test(String(err.message))) {
-      // Stripe blocks account updates with sandbox keys — set branding by hand.
-      console.log('\n⚠ Sandbox keys cannot update branding via the API. Set it in the Dashboard:');
+    if (/only live keys|on your own account/i.test(String(err.message))) {
+      // Stripe blocks branding updates on your own account via API entirely
+      // (sandbox keys: "only live keys"; live keys: 403 "you may only use it
+      // on connected accounts" — POST /v1/account is Connect-platform-only
+      // now). The asset uploads above still succeed; attach them by hand.
+      console.log('\n⚠ Stripe does not allow API branding updates on your own account. Set it in the Dashboard:');
       console.log('   Settings (gear, top right) → Business → Branding, then:');
       console.log(`   • Icon  : upload ${ICON_PNG}`);
       console.log(`   • Logo  : upload ${LOGO_PNG}`);
