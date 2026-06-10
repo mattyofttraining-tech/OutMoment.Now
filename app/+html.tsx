@@ -25,6 +25,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="OurMoment" />
 
         <ScrollViewStyleReset />
+        {/* Installed-PWA polish: the body peeks through around the home
+            indicator / overscroll — keep it the app's dark canvas, not white. */}
+        <style dangerouslySetInnerHTML={{ __html: 'body{background-color:#0B0B0F}' }} />
       </head>
       <body>{children}</body>
     </html>

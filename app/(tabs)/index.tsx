@@ -46,13 +46,18 @@ export default function MomentScreen() {
 
   if (!event) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
-        <EmptyState glyph="✨" title={t('home.emptyTitle')} subtitle={t('home.emptyBody')}>
-          <View style={{ gap: 10 }}>
-            <Button label={t('home.enterCode')} onPress={() => router.push('/join')} />
-            <Button label={t('home.hostEvent')} variant="secondary" onPress={() => router.push('/(tabs)/store')} />
-          </View>
-        </EmptyState>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top']}>
+        <View style={{ alignItems: 'center', paddingTop: 18 }}>
+          <BrandMark variant="badge" />
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <EmptyState glyph="✨" title={t('home.emptyTitle')} subtitle={t('home.emptyBody')}>
+            <View style={{ gap: 10 }}>
+              <Button label={t('home.enterCode')} onPress={() => router.push('/join')} />
+              <Button label={t('home.hostEvent')} variant="secondary" onPress={() => router.push('/(tabs)/store')} />
+            </View>
+          </EmptyState>
+        </View>
       </SafeAreaView>
     );
   }

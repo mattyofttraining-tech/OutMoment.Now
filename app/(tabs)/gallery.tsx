@@ -40,8 +40,13 @@ export default function GalleryScreen() {
 
   if (!event) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center' }}>
-        <EmptyState glyph="🖼️" title={t('gallery.noGalleryTitle')} subtitle={t('gallery.noGalleryBody')} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top']}>
+        <View style={{ alignItems: 'center', paddingTop: 18 }}>
+          <BrandMark variant="badge" />
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <EmptyState glyph="🖼️" title={t('gallery.noGalleryTitle')} subtitle={t('gallery.noGalleryBody')} />
+        </View>
       </SafeAreaView>
     );
   }
