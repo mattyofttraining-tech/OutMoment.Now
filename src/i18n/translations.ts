@@ -40,6 +40,41 @@ export const translations = {
       shareMessage:
         'Join our OurMoment event "%{title}" — enter code %{code} in the app to add your photos.',
     },
+    pricing: { from: 'from %{price}' },
+    tiers: {
+      intimate: { label: 'Intimate', blurb: 'Up to 25 guests' },
+      celebration: { label: 'Celebration', blurb: 'Up to 75 guests' },
+      grand: { label: 'Grand', blurb: 'Up to 200 guests' },
+      unlimited: { label: 'Unlimited', blurb: 'Unlimited guests' },
+    },
+    worlds: {
+      aiBadge: 'AI quests',
+      marriage: {
+        name: 'Marriage',
+        tagline: 'The moments your photographer will miss',
+        desc: 'Your photographer captures the shots you posed for. OurMoment captures everything else — the happy tears, the 1am dance floor, the toast that stole the night — seen through the eyes of everyone who showed up. You’ll experience your own wedding for the first time.',
+      },
+      confirmation: {
+        name: 'Confirmation',
+        tagline: 'One milestone. A hundred points of view.',
+        desc: 'The proud glances, the whole family around the table, the quiet moment that mattered most. Hand every guest a camera and relive the day from every seat in the room.',
+      },
+      baptism: {
+        name: 'Baptism',
+        tagline: 'They won’t remember it. You’ll never forget it.',
+        desc: 'Tiny hands, godparents’ smiles, the people who showed up for the very beginning — gathered into one tender gallery before the day slips away.',
+      },
+      birthday: {
+        name: 'Birthday',
+        tagline: 'The party, captured by the people in it.',
+        desc: 'The cake, the crowd, the surprise on their face — caught from every angle by everyone there. No more begging friends to “send me that photo.” It’s all already here.',
+      },
+      special: {
+        name: 'Special Moments',
+        tagline: 'You describe the party. AI writes the quests.',
+        desc: 'Reunion, retirement, anniversary, or a Tuesday that mattered — tell us about it in a sentence and our AI builds a custom set of photo missions, so nothing worth remembering goes uncaptured.',
+      },
+    },
     store: {
       headline: 'Don’t let the day disappear',
       subtitle:
@@ -231,6 +266,13 @@ export const translations = {
       resumeMissing: 'Payment received, but the booking details were lost. Please contact support.',
       resumeFailed: 'We couldn’t finish creating your event. Contact support — your payment is safe.',
       backHome: 'Back to home',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Emma’s Confirmation',
+      phBaptism: 'Baby Liam’s Baptism',
+      phBirthday: 'Dad’s 60th',
+      phSpecial: 'Our Reunion',
+      phDetail: 'Skagen · Midsummer',
+      phBrief: 'A surprise 60th birthday on the beach for my dad, who loves sailing and his grandkids…',
     },
   },
   de: {
@@ -241,6 +283,41 @@ export const translations = {
       copiedBody: 'Die Einladung ist in deiner Zwischenablage – füge sie überall ein.',
       shareMessage:
         'Mach mit bei unserem OurMoment-Event "%{title}" – gib den Code %{code} in der App ein, um deine Fotos hinzuzufügen.',
+    },
+    pricing: { from: 'ab %{price}' },
+    tiers: {
+      intimate: { label: 'Intim', blurb: 'Bis zu 25 Gäste' },
+      celebration: { label: 'Feier', blurb: 'Bis zu 75 Gäste' },
+      grand: { label: 'Groß', blurb: 'Bis zu 200 Gäste' },
+      unlimited: { label: 'Unbegrenzt', blurb: 'Unbegrenzt viele Gäste' },
+    },
+    worlds: {
+      aiBadge: 'KI-Aufgaben',
+      marriage: {
+        name: 'Hochzeit',
+        tagline: 'Die Momente, die dein Fotograf verpasst',
+        desc: 'Dein Fotograf hält die gestellten Bilder fest. OurMoment fängt alles andere ein – die Freudentränen, die Tanzfläche um 1 Uhr nachts, die Rede, die den Abend gestohlen hat – gesehen mit den Augen aller, die dabei waren. Du erlebst deine eigene Hochzeit zum ersten Mal.',
+      },
+      confirmation: {
+        name: 'Konfirmation',
+        tagline: 'Ein Meilenstein. Hundert Blickwinkel.',
+        desc: 'Die stolzen Blicke, die ganze Familie am Tisch, der stille Moment, der am meisten zählte. Gib jedem Gast eine Kamera und erlebe den Tag aus jedem Platz im Raum.',
+      },
+      baptism: {
+        name: 'Taufe',
+        tagline: 'Sie werden sich nicht erinnern. Du wirst es nie vergessen.',
+        desc: 'Winzige Hände, das Lächeln der Paten, die Menschen, die ganz am Anfang dabei waren – gesammelt in einer zarten Galerie, bevor der Tag entgleitet.',
+      },
+      birthday: {
+        name: 'Geburtstag',
+        tagline: 'Die Party, festgehalten von den Menschen mittendrin.',
+        desc: 'Die Torte, die Gäste, die Überraschung im Gesicht – aus jedem Winkel eingefangen von allen, die da waren. Nie wieder Freunde anbetteln: „Schick mir das Foto.“ Es ist schon alles hier.',
+      },
+      special: {
+        name: 'Besondere Momente',
+        tagline: 'Du beschreibst die Party. KI schreibt die Aufgaben.',
+        desc: 'Wiedersehen, Ruhestand, Jubiläum oder ein Dienstag, der zählte – erzähl uns in einem Satz davon, und unsere KI baut ein eigenes Set an Foto-Missionen, damit nichts Erinnerungswürdiges verloren geht.',
+      },
     },
     store: {
       headline: 'Lass den Tag nicht verschwinden',
@@ -433,6 +510,13 @@ export const translations = {
       resumeMissing: 'Zahlung erhalten, aber die Buchungsdaten gingen verloren. Bitte kontaktiere den Support.',
       resumeFailed: 'Dein Event konnte nicht erstellt werden. Kontaktiere den Support — deine Zahlung ist sicher.',
       backHome: 'Zur Startseite',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Emmas Konfirmation',
+      phBaptism: 'Taufe von Baby Liam',
+      phBirthday: 'Papas 60.',
+      phSpecial: 'Unser Wiedersehen',
+      phDetail: 'Sylt · Mittsommer',
+      phBrief: 'Ein Überraschungs-60er am Strand für meinen Papa, der Segeln und seine Enkel liebt…',
     },
   },
   fr: {
@@ -443,6 +527,41 @@ export const translations = {
       copiedBody: 'L’invitation est dans votre presse-papiers — collez-la où vous voulez.',
       shareMessage:
         'Rejoignez notre événement OurMoment « %{title} » — saisissez le code %{code} dans l’app pour ajouter vos photos.',
+    },
+    pricing: { from: 'dès %{price}' },
+    tiers: {
+      intimate: { label: 'Intime', blurb: 'Jusqu’à 25 invités' },
+      celebration: { label: 'Célébration', blurb: 'Jusqu’à 75 invités' },
+      grand: { label: 'Grandiose', blurb: 'Jusqu’à 200 invités' },
+      unlimited: { label: 'Illimité', blurb: 'Invités illimités' },
+    },
+    worlds: {
+      aiBadge: 'Défis IA',
+      marriage: {
+        name: 'Mariage',
+        tagline: 'Les moments que votre photographe va manquer',
+        desc: 'Votre photographe capture les poses. OurMoment capture tout le reste — les larmes de joie, la piste de danse à 1h du matin, le discours qui a volé la soirée — vu à travers les yeux de tous ceux qui étaient là. Vous vivrez votre propre mariage pour la première fois.',
+      },
+      confirmation: {
+        name: 'Confirmation',
+        tagline: 'Une étape. Cent points de vue.',
+        desc: 'Les regards fiers, toute la famille autour de la table, l’instant discret qui comptait le plus. Donnez un appareil photo à chaque invité et revivez la journée depuis chaque place de la salle.',
+      },
+      baptism: {
+        name: 'Baptême',
+        tagline: 'Ils ne s’en souviendront pas. Vous ne l’oublierez jamais.',
+        desc: 'Des petites mains, les sourires des parrains, ceux qui étaient là pour le tout début — réunis dans une galerie pleine de tendresse avant que la journée ne s’efface.',
+      },
+      birthday: {
+        name: 'Anniversaire',
+        tagline: 'La fête, capturée par ceux qui la vivent.',
+        desc: 'Le gâteau, la foule, la surprise sur son visage — saisis sous tous les angles par tous les présents. Fini de supplier les amis : « envoie-moi cette photo ». Tout est déjà là.',
+      },
+      special: {
+        name: 'Moments spéciaux',
+        tagline: 'Vous décrivez la fête. L’IA écrit les défis.',
+        desc: 'Retrouvailles, retraite, anniversaire de mariage ou un mardi qui comptait — racontez-le en une phrase et notre IA compose un jeu de missions photo sur mesure, pour que rien de mémorable ne soit perdu.',
+      },
     },
     store: {
       headline: 'Ne laissez pas le jour disparaître',
@@ -635,6 +754,13 @@ export const translations = {
       resumeMissing: 'Paiement reçu, mais les détails de la réservation ont été perdus. Veuillez contacter le support.',
       resumeFailed: 'Impossible de finaliser votre événement. Contactez le support — votre paiement est en sécurité.',
       backHome: 'Retour à l’accueil',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Confirmation d’Emma',
+      phBaptism: 'Baptême du petit Liam',
+      phBirthday: 'Les 60 ans de papa',
+      phSpecial: 'Nos retrouvailles',
+      phDetail: 'Biarritz · Solstice d’été',
+      phBrief: 'Un 60e anniversaire surprise à la plage pour mon père, qui adore la voile et ses petits-enfants…',
     },
   },
   es: {
@@ -645,6 +771,41 @@ export const translations = {
       copiedBody: 'La invitación está en tu portapapeles: pégala donde quieras.',
       shareMessage:
         'Únete a nuestro evento de OurMoment «%{title}»: introduce el código %{code} en la app para añadir tus fotos.',
+    },
+    pricing: { from: 'desde %{price}' },
+    tiers: {
+      intimate: { label: 'Íntimo', blurb: 'Hasta 25 invitados' },
+      celebration: { label: 'Celebración', blurb: 'Hasta 75 invitados' },
+      grand: { label: 'A lo grande', blurb: 'Hasta 200 invitados' },
+      unlimited: { label: 'Ilimitado', blurb: 'Invitados ilimitados' },
+    },
+    worlds: {
+      aiBadge: 'Retos con IA',
+      marriage: {
+        name: 'Boda',
+        tagline: 'Los momentos que tu fotógrafo se perderá',
+        desc: 'Tu fotógrafo captura las fotos posadas. OurMoment captura todo lo demás: las lágrimas de alegría, la pista de baile a la 1 de la madrugada, el brindis que robó la noche, visto a través de los ojos de todos los que estuvieron. Vivirás tu propia boda por primera vez.',
+      },
+      confirmation: {
+        name: 'Confirmación',
+        tagline: 'Un hito. Cien puntos de vista.',
+        desc: 'Las miradas de orgullo, toda la familia alrededor de la mesa, el momento silencioso que más importó. Dale una cámara a cada invitado y revive el día desde cada asiento de la sala.',
+      },
+      baptism: {
+        name: 'Bautizo',
+        tagline: 'Ellos no lo recordarán. Tú no lo olvidarás jamás.',
+        desc: 'Manitas pequeñas, las sonrisas de los padrinos, la gente que estuvo en el mismísimo comienzo, reunidos en una galería llena de ternura antes de que el día se escape.',
+      },
+      birthday: {
+        name: 'Cumpleaños',
+        tagline: 'La fiesta, capturada por quienes la viven.',
+        desc: 'La tarta, la gente, la sorpresa en su cara, captadas desde todos los ángulos por todos los presentes. Se acabó suplicar a los amigos «mándame esa foto». Ya está todo aquí.',
+      },
+      special: {
+        name: 'Momentos especiales',
+        tagline: 'Tú describes la fiesta. La IA escribe los retos.',
+        desc: 'Una reunión, una jubilación, un aniversario o un martes que importó: cuéntanoslo en una frase y nuestra IA crea un conjunto de misiones fotográficas a medida, para que nada memorable quede sin capturar.',
+      },
     },
     store: {
       headline: 'No dejes que el día desaparezca',
@@ -837,6 +998,13 @@ export const translations = {
       resumeMissing: 'Pago recibido, pero se perdieron los datos de la reserva. Contacta con soporte.',
       resumeFailed: 'No pudimos terminar de crear tu evento. Contacta con soporte: tu pago está a salvo.',
       backHome: 'Volver al inicio',
+      phMarriage: 'Ana & Jonás',
+      phConfirmation: 'Confirmación de Emma',
+      phBaptism: 'Bautizo del pequeño Liam',
+      phBirthday: 'Los 60 de papá',
+      phSpecial: 'Nuestro reencuentro',
+      phDetail: 'Cádiz · San Juan',
+      phBrief: 'Un 60 cumpleaños sorpresa en la playa para mi padre, que adora navegar y a sus nietos…',
     },
   },
   it: {
@@ -847,6 +1015,41 @@ export const translations = {
       copiedBody: 'L’invito è negli appunti: incollalo dove vuoi.',
       shareMessage:
         'Unisciti al nostro evento OurMoment "%{title}": inserisci il codice %{code} nell’app per aggiungere le tue foto.',
+    },
+    pricing: { from: 'da %{price}' },
+    tiers: {
+      intimate: { label: 'Intimo', blurb: 'Fino a 25 ospiti' },
+      celebration: { label: 'Festa', blurb: 'Fino a 75 ospiti' },
+      grand: { label: 'In grande', blurb: 'Fino a 200 ospiti' },
+      unlimited: { label: 'Illimitato', blurb: 'Ospiti illimitati' },
+    },
+    worlds: {
+      aiBadge: 'Missioni IA',
+      marriage: {
+        name: 'Matrimonio',
+        tagline: 'I momenti che il tuo fotografo si perderà',
+        desc: 'Il tuo fotografo cattura le pose. OurMoment cattura tutto il resto: le lacrime di gioia, la pista da ballo all’una di notte, il brindisi che ha rubato la serata, visti con gli occhi di tutti i presenti. Vivrai il tuo matrimonio per la prima volta.',
+      },
+      confirmation: {
+        name: 'Cresima',
+        tagline: 'Un traguardo. Cento punti di vista.',
+        desc: 'Gli sguardi orgogliosi, tutta la famiglia attorno al tavolo, il momento silenzioso che contava di più. Metti una fotocamera in mano a ogni ospite e rivivi la giornata da ogni posto della sala.',
+      },
+      baptism: {
+        name: 'Battesimo',
+        tagline: 'Loro non lo ricorderanno. Tu non lo dimenticherai mai.',
+        desc: 'Manine piccole, i sorrisi dei padrini, le persone presenti fin dall’inizio: raccolti in una galleria piena di tenerezza prima che la giornata scivoli via.',
+      },
+      birthday: {
+        name: 'Compleanno',
+        tagline: 'La festa, catturata da chi la vive.',
+        desc: 'La torta, la folla, la sorpresa sul suo viso: colti da ogni angolazione da tutti i presenti. Basta implorare gli amici di «mandarmi quella foto». È già tutto qui.',
+      },
+      special: {
+        name: 'Momenti speciali',
+        tagline: 'Tu descrivi la festa. L’IA scrive le missioni.',
+        desc: 'Una rimpatriata, una pensione, un anniversario o un martedì che contava: raccontacelo in una frase e la nostra IA crea un set di missioni fotografiche su misura, perché nulla di memorabile resti senza scatto.',
+      },
     },
     store: {
       headline: 'Non lasciare che il giorno svanisca',
@@ -1039,6 +1242,13 @@ export const translations = {
       resumeMissing: 'Pagamento ricevuto, ma i dettagli della prenotazione sono andati persi. Contatta l’assistenza.',
       resumeFailed: 'Non siamo riusciti a completare il tuo evento. Contatta l’assistenza: il tuo pagamento è al sicuro.',
       backHome: 'Torna alla home',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'La cresima di Emma',
+      phBaptism: 'Il battesimo del piccolo Liam',
+      phBirthday: 'I 60 anni di papà',
+      phSpecial: 'La nostra rimpatriata',
+      phDetail: 'Positano · Ferragosto',
+      phBrief: 'Un 60° compleanno a sorpresa in spiaggia per mio papà, che ama la vela e i suoi nipotini…',
     },
   },
   nl: {
@@ -1049,6 +1259,41 @@ export const translations = {
       copiedBody: 'De uitnodiging staat op je klembord — plak hem waar je wilt.',
       shareMessage:
         'Doe mee met ons OurMoment-event "%{title}" — voer code %{code} in de app in om je foto’s toe te voegen.',
+    },
+    pricing: { from: 'vanaf %{price}' },
+    tiers: {
+      intimate: { label: 'Intiem', blurb: 'Tot 25 gasten' },
+      celebration: { label: 'Feest', blurb: 'Tot 75 gasten' },
+      grand: { label: 'Groots', blurb: 'Tot 200 gasten' },
+      unlimited: { label: 'Onbeperkt', blurb: 'Onbeperkt aantal gasten' },
+    },
+    worlds: {
+      aiBadge: 'AI-opdrachten',
+      marriage: {
+        name: 'Bruiloft',
+        tagline: 'De momenten die je fotograaf gaat missen',
+        desc: 'Je fotograaf legt de geposeerde foto’s vast. OurMoment vangt al het andere — de vreugdetranen, de dansvloer om 1 uur ’s nachts, de toespraak die de avond stal — gezien door de ogen van iedereen die erbij was. Je beleeft je eigen bruiloft voor het eerst.',
+      },
+      confirmation: {
+        name: 'Vormsel',
+        tagline: 'Eén mijlpaal. Honderd invalshoeken.',
+        desc: 'De trotse blikken, de hele familie rond de tafel, het stille moment dat het meest telde. Geef elke gast een camera en herbeleef de dag vanaf elke stoel in de zaal.',
+      },
+      baptism: {
+        name: 'Doop',
+        tagline: 'Zij zullen het niet onthouden. Jij vergeet het nooit.',
+        desc: 'Kleine handjes, de glimlach van de peetouders, de mensen die er bij het allereerste begin waren — verzameld in één tedere galerij voordat de dag vervliegt.',
+      },
+      birthday: {
+        name: 'Verjaardag',
+        tagline: 'Het feest, vastgelegd door de mensen zelf.',
+        desc: 'De taart, de menigte, de verrassing op hun gezicht — vanuit elke hoek vastgelegd door iedereen die er was. Nooit meer vrienden smeken om “stuur me die foto”. Alles staat er al.',
+      },
+      special: {
+        name: 'Speciale momenten',
+        tagline: 'Jij beschrijft het feest. AI schrijft de opdrachten.',
+        desc: 'Een reünie, pensioen, jubileum of een dinsdag die ertoe deed — vertel het ons in één zin en onze AI bouwt een set foto-missies op maat, zodat niets gedenkwaardigs onvastgelegd blijft.',
+      },
     },
     store: {
       headline: 'Laat de dag niet verdwijnen',
@@ -1241,6 +1486,13 @@ export const translations = {
       resumeMissing: 'Betaling ontvangen, maar de boekingsgegevens zijn verloren gegaan. Neem contact op met support.',
       resumeFailed: 'We konden je evenement niet aanmaken. Neem contact op met support — je betaling is veilig.',
       backHome: 'Terug naar home',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Emma’s vormsel',
+      phBaptism: 'De doop van baby Liam',
+      phBirthday: 'Papa’s 60e',
+      phSpecial: 'Onze reünie',
+      phDetail: 'Texel · Midzomer',
+      phBrief: 'Een verrassings-60e verjaardag op het strand voor mijn vader, die dol is op zeilen en zijn kleinkinderen…',
     },
   },
   pt: {
@@ -1251,6 +1503,41 @@ export const translations = {
       copiedBody: 'O convite está na sua área de transferência — cole onde quiser.',
       shareMessage:
         'Junte-se ao nosso evento OurMoment "%{title}" — introduza o código %{code} na app para adicionar as suas fotos.',
+    },
+    pricing: { from: 'desde %{price}' },
+    tiers: {
+      intimate: { label: 'Íntimo', blurb: 'Até 25 convidados' },
+      celebration: { label: 'Celebração', blurb: 'Até 75 convidados' },
+      grand: { label: 'Em grande', blurb: 'Até 200 convidados' },
+      unlimited: { label: 'Ilimitado', blurb: 'Convidados ilimitados' },
+    },
+    worlds: {
+      aiBadge: 'Desafios com IA',
+      marriage: {
+        name: 'Casamento',
+        tagline: 'Os momentos que o seu fotógrafo vai perder',
+        desc: 'O seu fotógrafo capta as fotos posadas. O OurMoment capta tudo o resto — as lágrimas de alegria, a pista de dança à 1 da manhã, o brinde que roubou a noite — visto pelos olhos de todos os que estiveram lá. Vai viver o seu próprio casamento pela primeira vez.',
+      },
+      confirmation: {
+        name: 'Crisma',
+        tagline: 'Um marco. Cem pontos de vista.',
+        desc: 'Os olhares orgulhosos, a família toda à volta da mesa, o momento silencioso que mais importou. Dê uma câmara a cada convidado e reviva o dia a partir de cada lugar da sala.',
+      },
+      baptism: {
+        name: 'Batizado',
+        tagline: 'Eles não se vão lembrar. Você nunca vai esquecer.',
+        desc: 'Mãozinhas pequenas, os sorrisos dos padrinhos, as pessoas que estiveram lá desde o início — reunidos numa galeria cheia de ternura antes que o dia escape.',
+      },
+      birthday: {
+        name: 'Aniversário',
+        tagline: 'A festa, captada por quem a vive.',
+        desc: 'O bolo, a multidão, a surpresa no rosto — apanhados de todos os ângulos por todos os presentes. Acabou-se implorar aos amigos «manda-me essa foto». Está tudo aqui.',
+      },
+      special: {
+        name: 'Momentos especiais',
+        tagline: 'Você descreve a festa. A IA escreve os desafios.',
+        desc: 'Um reencontro, uma reforma, um aniversário de casamento ou uma terça-feira que importou — conte-nos numa frase e a nossa IA cria um conjunto de missões fotográficas à medida, para que nada memorável fique por captar.',
+      },
     },
     store: {
       headline: 'Não deixe o dia desaparecer',
@@ -1443,6 +1730,13 @@ export const translations = {
       resumeMissing: 'Pagamento recebido, mas os detalhes da reserva perderam-se. Contacta o suporte.',
       resumeFailed: 'Não foi possível concluir o teu evento. Contacta o suporte — o teu pagamento está seguro.',
       backHome: 'Voltar ao início',
+      phMarriage: 'Ana & Jonas',
+      phConfirmation: 'Crisma da Emma',
+      phBaptism: 'Batizado do pequeno Liam',
+      phBirthday: 'Os 60 do pai',
+      phSpecial: 'O nosso reencontro',
+      phDetail: 'Cascais · São João',
+      phBrief: 'Um 60.º aniversário surpresa na praia para o meu pai, que adora velejar e os netos…',
     },
   },
   pl: {
@@ -1453,6 +1747,41 @@ export const translations = {
       copiedBody: 'Zaproszenie jest w schowku — wklej je, gdzie chcesz.',
       shareMessage:
         'Dołącz do naszego wydarzenia OurMoment „%{title}” — wpisz kod %{code} w aplikacji, aby dodać swoje zdjęcia.',
+    },
+    pricing: { from: 'od %{price}' },
+    tiers: {
+      intimate: { label: 'Kameralne', blurb: 'Do 25 gości' },
+      celebration: { label: 'Przyjęcie', blurb: 'Do 75 gości' },
+      grand: { label: 'Z rozmachem', blurb: 'Do 200 gości' },
+      unlimited: { label: 'Bez limitu', blurb: 'Nielimitowana liczba gości' },
+    },
+    worlds: {
+      aiBadge: 'Zadania AI',
+      marriage: {
+        name: 'Ślub',
+        tagline: 'Momenty, które umkną Twojemu fotografowi',
+        desc: 'Fotograf uchwyci pozowane kadry. OurMoment uchwyci całą resztę — łzy szczęścia, parkiet o pierwszej w nocy, toast, który skradł wieczór — oczami wszystkich, którzy przyszli. Przeżyjesz własne wesele po raz pierwszy.',
+      },
+      confirmation: {
+        name: 'Bierzmowanie',
+        tagline: 'Jeden kamień milowy. Sto spojrzeń.',
+        desc: 'Dumne spojrzenia, cała rodzina przy stole, cicha chwila, która znaczyła najwięcej. Daj każdemu gościowi aparat i przeżyj ten dzień z każdego miejsca na sali.',
+      },
+      baptism: {
+        name: 'Chrzest',
+        tagline: 'Oni nie będą pamiętać. Ty nie zapomnisz nigdy.',
+        desc: 'Małe rączki, uśmiechy chrzestnych, ludzie obecni na samym początku — zebrani w jednej czułej galerii, zanim ten dzień przeminie.',
+      },
+      birthday: {
+        name: 'Urodziny',
+        tagline: 'Impreza uchwycona przez tych, którzy na niej są.',
+        desc: 'Tort, tłum, zaskoczenie na twarzy — uchwycone z każdego kąta przez wszystkich obecnych. Koniec z błaganiem znajomych „wyślij mi to zdjęcie”. Wszystko już tu jest.',
+      },
+      special: {
+        name: 'Wyjątkowe chwile',
+        tagline: 'Ty opisujesz imprezę. AI pisze zadania.',
+        desc: 'Zjazd, przejście na emeryturę, rocznica albo wtorek, który miał znaczenie — opisz to jednym zdaniem, a nasza AI ułoży zestaw fotograficznych misji na miarę, żeby nic wartego zapamiętania nie umknęło.',
+      },
     },
     store: {
       headline: 'Nie pozwól, by ten dzień zniknął',
@@ -1645,6 +1974,13 @@ export const translations = {
       resumeMissing: 'Płatność otrzymana, ale dane rezerwacji zostały utracone. Skontaktuj się z pomocą techniczną.',
       resumeFailed: 'Nie udało się utworzyć wydarzenia. Skontaktuj się z pomocą — Twoja płatność jest bezpieczna.',
       backHome: 'Wróć do strony głównej',
+      phMarriage: 'Anna i Jonas',
+      phConfirmation: 'Bierzmowanie Emmy',
+      phBaptism: 'Chrzest małego Liama',
+      phBirthday: '60. urodziny taty',
+      phSpecial: 'Nasz zjazd',
+      phDetail: 'Sopot · Noc świętojańska',
+      phBrief: 'Niespodziankowe 60. urodziny na plaży dla taty, który kocha żeglarstwo i swoje wnuki…',
     },
   },
   da: {
@@ -1655,6 +1991,41 @@ export const translations = {
       copiedBody: 'Invitationen ligger i din udklipsholder — indsæt den hvor som helst.',
       shareMessage:
         'Vær med til vores OurMoment-event "%{title}" — indtast koden %{code} i appen for at tilføje dine billeder.',
+    },
+    pricing: { from: 'fra %{price}' },
+    tiers: {
+      intimate: { label: 'Intim', blurb: 'Op til 25 gæster' },
+      celebration: { label: 'Fest', blurb: 'Op til 75 gæster' },
+      grand: { label: 'Stor fest', blurb: 'Op til 200 gæster' },
+      unlimited: { label: 'Ubegrænset', blurb: 'Ubegrænset antal gæster' },
+    },
+    worlds: {
+      aiBadge: 'AI-opgaver',
+      marriage: {
+        name: 'Bryllup',
+        tagline: 'De øjeblikke, din fotograf ikke fanger',
+        desc: 'Din fotograf fanger de opstillede billeder. OurMoment fanger alt det andet — glædestårerne, dansegulvet kl. 1 om natten, talen der stjal aftenen — set gennem øjnene på alle, der var med. Du oplever dit eget bryllup for første gang.',
+      },
+      confirmation: {
+        name: 'Konfirmation',
+        tagline: 'Én milepæl. Hundrede synsvinkler.',
+        desc: 'De stolte blikke, hele familien omkring bordet, det stille øjeblik der betød mest. Giv hver gæst et kamera, og genoplev dagen fra hver eneste plads i lokalet.',
+      },
+      baptism: {
+        name: 'Barnedåb',
+        tagline: 'De husker det ikke. Du glemmer det aldrig.',
+        desc: 'Små hænder, faddernes smil, menneskene der var med fra den allerførste begyndelse — samlet i ét ømt galleri, før dagen glider væk.',
+      },
+      birthday: {
+        name: 'Fødselsdag',
+        tagline: 'Festen, fanget af dem der er med til den.',
+        desc: 'Kagen, gæsterne, overraskelsen i ansigtet — fanget fra alle vinkler af alle, der var der. Slut med at tigge venner om at "sende mig det billede". Det hele er her allerede.',
+      },
+      special: {
+        name: 'Særlige øjeblikke',
+        tagline: 'Du beskriver festen. AI skriver opgaverne.',
+        desc: 'Gensyn, pensionsfest, jubilæum eller en tirsdag der betød noget — fortæl os om det i én sætning, og vores AI bygger et skræddersyet sæt fotomissioner, så intet mindeværdigt går tabt.',
+      },
     },
     store: {
       headline: 'Lad ikke dagen forsvinde',
@@ -1847,6 +2218,13 @@ export const translations = {
       resumeMissing: 'Betaling modtaget, men bookingoplysningerne gik tabt. Kontakt support.',
       resumeFailed: 'Vi kunne ikke færdiggøre dit event. Kontakt support — din betaling er sikker.',
       backHome: 'Tilbage til forsiden',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Emmas konfirmation',
+      phBaptism: 'Lille Liams barnedåb',
+      phBirthday: 'Fars 60-års',
+      phSpecial: 'Vores gensyn',
+      phDetail: 'Skagen · Sankthans',
+      phBrief: 'En overraskelses-60-års fødselsdag på stranden for min far, der elsker at sejle og sine børnebørn…',
     },
   },
   sv: {
@@ -1857,6 +2235,41 @@ export const translations = {
       copiedBody: 'Inbjudan ligger i urklipp — klistra in den var du vill.',
       shareMessage:
         'Gå med i vårt OurMoment-event "%{title}" — ange koden %{code} i appen för att lägga till dina bilder.',
+    },
+    pricing: { from: 'från %{price}' },
+    tiers: {
+      intimate: { label: 'Intim', blurb: 'Upp till 25 gäster' },
+      celebration: { label: 'Fest', blurb: 'Upp till 75 gäster' },
+      grand: { label: 'Storslagen', blurb: 'Upp till 200 gäster' },
+      unlimited: { label: 'Obegränsad', blurb: 'Obegränsat antal gäster' },
+    },
+    worlds: {
+      aiBadge: 'AI-uppdrag',
+      marriage: {
+        name: 'Bröllop',
+        tagline: 'Ögonblicken din fotograf missar',
+        desc: 'Din fotograf fångar de poserade bilderna. OurMoment fångar allt annat — glädjetårarna, dansgolvet klockan ett på natten, talet som stal kvällen — sett genom ögonen på alla som var där. Du upplever ditt eget bröllop för första gången.',
+      },
+      confirmation: {
+        name: 'Konfirmation',
+        tagline: 'En milstolpe. Hundra synvinklar.',
+        desc: 'De stolta blickarna, hela familjen runt bordet, det stilla ögonblicket som betydde mest. Ge varje gäst en kamera och återupplev dagen från varje plats i rummet.',
+      },
+      baptism: {
+        name: 'Dop',
+        tagline: 'De kommer inte minnas det. Du glömmer det aldrig.',
+        desc: 'Små händer, faddrarnas leenden, människorna som var med från allra första början — samlade i ett ömt galleri innan dagen glider bort.',
+      },
+      birthday: {
+        name: 'Födelsedag',
+        tagline: 'Festen, fångad av dem som är där.',
+        desc: 'Tårtan, vimlet, överraskningen i ansiktet — fångat från alla vinklar av alla som var där. Slut på att tigga vänner om att "skicka den där bilden". Allt finns redan här.',
+      },
+      special: {
+        name: 'Speciella stunder',
+        tagline: 'Du beskriver festen. AI skriver uppdragen.',
+        desc: 'Återträff, pensionsfest, jubileum eller en tisdag som betydde något — berätta i en mening så bygger vår AI en skräddarsydd uppsättning fotouppdrag, så att inget minnesvärt går förlorat.',
+      },
     },
     store: {
       headline: 'Låt inte dagen försvinna',
@@ -2049,6 +2462,13 @@ export const translations = {
       resumeMissing: 'Betalning mottagen, men bokningsuppgifterna gick förlorade. Kontakta supporten.',
       resumeFailed: 'Vi kunde inte slutföra ditt evenemang. Kontakta supporten — din betalning är säker.',
       backHome: 'Tillbaka till start',
+      phMarriage: 'Anna & Jonas',
+      phConfirmation: 'Emmas konfirmation',
+      phBaptism: 'Lille Liams dop',
+      phBirthday: 'Pappas 60-årsdag',
+      phSpecial: 'Vår återträff',
+      phDetail: 'Marstrand · Midsommar',
+      phBrief: 'En överraskningsfest för pappas 60-årsdag på stranden — han älskar segling och sina barnbarn…',
     },
   },
 };

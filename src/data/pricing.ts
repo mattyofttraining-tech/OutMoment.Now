@@ -66,15 +66,5 @@ export function formatPrice(amount: number, currency = '€'): string {
   return `${currency}${amount.toLocaleString('en-IE')}`;
 }
 
-/** The "from $X" label shown on store cards (smallest tier). */
-export function fromLabel(type: EventType): string {
-  return `from ${formatPrice(priceFor(type, 'intimate'))}`;
-}
-
-/** Per-guest value framing for copy, e.g. "just $1.99 a guest". */
-export function perGuestLabel(type: EventType, tierId: GuestTierId): string {
-  const tier = getTier(tierId);
-  const guests = tier.maxGuests ?? 300;
-  const per = priceFor(type, tierId) / guests;
-  return `about ${formatPrice(Math.max(0.5, Math.round(per * 100) / 100))} a guest`;
-}
+// The "from €X" store-card label lives in i18n (`pricing.from`) so it can be
+// translated; compose it with t('pricing.from', { price: formatPrice(...) }).

@@ -160,10 +160,10 @@ export default function BookScreen() {
             <View style={{ padding: 18 }}>
               <Text style={{ fontSize: 32 }}>{world.glyph}</Text>
               <Text variant="title1" color="#fff">
-                {world.name}
+                {t(`worlds.${world.type}.name`)}
               </Text>
               <Text variant="subhead" color="rgba(255,255,255,0.8)">
-                {world.description}
+                {t(`worlds.${world.type}.desc`)}
               </Text>
             </View>
           </View>
@@ -173,7 +173,7 @@ export default function BookScreen() {
               <TextInput
                 value={title}
                 onChangeText={setTitle}
-                placeholder={placeholderTitle(world.type)}
+                placeholder={t(placeholderTitleKey(world.type))}
                 placeholderTextColor={theme.colors.textTertiary}
                 style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
               />
@@ -183,7 +183,7 @@ export default function BookScreen() {
               <TextInput
                 value={subtitle}
                 onChangeText={setSubtitle}
-                placeholder="Skagen · Midsummer"
+                placeholder={t('book.phDetail')}
                 placeholderTextColor={theme.colors.textTertiary}
                 style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
               />
@@ -194,7 +194,7 @@ export default function BookScreen() {
                 <TextInput
                   value={brief}
                   onChangeText={setBrief}
-                  placeholder="A surprise 60th birthday on the beach for my dad, who loves sailing and his grandkids…"
+                  placeholder={t('book.phBrief')}
                   placeholderTextColor={theme.colors.textTertiary}
                   multiline
                   style={[styles.input, styles.textArea, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
@@ -254,11 +254,11 @@ export default function BookScreen() {
                       </View>
                       <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                          <Text variant="headline">{tier.label}</Text>
+                          <Text variant="headline">{t(`tiers.${tier.id}.label`)}</Text>
                           {tier.popular ? <Badge label={t('book.mostLoved')} /> : null}
                         </View>
                         <Text variant="footnote" dim>
-                          {tier.blurb}
+                          {t(`tiers.${tier.id}.blurb`)}
                         </Text>
                       </View>
                       <Text variant="title3">{formatPrice(priceFor(world.type, tier.id))}</Text>
@@ -298,18 +298,18 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function placeholderTitle(type: EventType): string {
+function placeholderTitleKey(type: EventType): string {
   switch (type) {
     case 'marriage':
-      return 'Anna & Jonas';
+      return 'book.phMarriage';
     case 'confirmation':
-      return 'Emma’s Confirmation';
+      return 'book.phConfirmation';
     case 'baptism':
-      return 'Baby Liam’s Baptism';
+      return 'book.phBaptism';
     case 'birthday':
-      return 'Dad’s 60th';
+      return 'book.phBirthday';
     default:
-      return 'Our Reunion';
+      return 'book.phSpecial';
   }
 }
 

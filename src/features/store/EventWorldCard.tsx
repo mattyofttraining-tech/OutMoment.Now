@@ -6,7 +6,8 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import type { EventWorld } from '@/types';
 import { motion, useTheme } from '@/theme';
 import { Badge, PressableScale, Text } from '@/components/ui';
-import { fromLabel } from '@/data/pricing';
+import { formatPrice, priceFor } from '@/data/pricing';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export interface EventWorldCardProps {
   world: EventWorld;
@@ -19,6 +20,7 @@ export interface EventWorldCardProps {
  */
 export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const tilt = useSharedValue(0);
 
   const tiltStyle = useAnimatedStyle(() => ({
@@ -49,17 +51,21 @@ export function EventWorldCard({ world, onPress }: EventWorldCardProps) {
         />
 
         <View style={styles.top}>
-          {world.aiPowered ? <Badge label="AI quests" icon="✨" bg="rgba(255,255,255,0.16)" color="#fff" /> : <View />}
-          <Badge label={fromLabel(world.type)} bg="rgba(255,255,255,0.16)" color="#fff" />
+          {world.aiPowered ? <Badge label={t('worlds.aiBadge')} icon="✨" bg="rgba(255,255,255,0.16)" color="#fff" /> : <View />}
+          <Badge
+            label={t('pricing.from', { price: formatPrice(priceFor(world.type, 'intimate')) })}
+            bg="rgba(255,255,255,0.16)"
+            color="#fff"
+          />
         </View>
 
         <View style={styles.bottom}>
           <Text style={{ fontSize: 34 }}>{world.glyph}</Text>
           <Text variant="title2" color="#fff">
-            {world.name}
+            {t(`worlds.${world.type}.name`)}
           </Text>
           <Text variant="subhead" color="rgba(255,255,255,0.78)">
-            {world.tagline}
+            {t(`worlds.${world.type}.tagline`)}
           </Text>
         </View>
       </Animated.View>
