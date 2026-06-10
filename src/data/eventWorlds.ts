@@ -145,12 +145,14 @@ export const EVENT_WORLDS: Record<EventType, EventWorld> = {
   },
 };
 
+// Storefront order: Special Moments leads (the AI flagship — fits any occasion),
+// Marriage second, then the family milestones.
 export const EVENT_WORLD_LIST: EventWorld[] = [
+  EVENT_WORLDS.special,
   EVENT_WORLDS.marriage,
   EVENT_WORLDS.confirmation,
   EVENT_WORLDS.baptism,
   EVENT_WORLDS.birthday,
-  EVENT_WORLDS.special,
 ];
 
 export function getWorld(type: EventType): EventWorld {
