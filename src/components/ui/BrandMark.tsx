@@ -28,7 +28,7 @@ export function BrandMark({ variant = 'badge', onPhoto = false, style }: BrandMa
 
   if (variant === 'hero') {
     return (
-      <View style={[{ alignItems: 'center', gap: 10 }, style]}>
+      <View style={[{ alignItems: 'center', gap: 10, flexShrink: 0 }, style]}>
         <Image
           source={LOGO}
           style={{ width: 64, height: 64, borderRadius: 16 }}
@@ -44,7 +44,9 @@ export function BrandMark({ variant = 'badge', onPhoto = false, style }: BrandMa
 
   if (variant === 'whisper') {
     return (
-      <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6, opacity: 0.55 }, style]}>
+      // flexShrink: 0 — the brand mark must never be crushed or clipped by a
+      // flex row, no matter how long its siblings (e.g. event titles) get.
+      <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6, opacity: 0.55, flexShrink: 0 }, style]}>
         <Image
           source={LOGO}
           style={{ width: 18, height: 18, borderRadius: 5 }}
@@ -59,7 +61,7 @@ export function BrandMark({ variant = 'badge', onPhoto = false, style }: BrandMa
   }
 
   return (
-    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10 }, style]}>
+    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10, flexShrink: 0 }, style]}>
       <Image
         source={LOGO}
         style={{ width: 40, height: 40, borderRadius: 10 }}

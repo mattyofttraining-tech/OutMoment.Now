@@ -68,7 +68,8 @@ export default function GalleryScreen() {
   const header = (
     <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 14 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <View>
+        {/* flex: 1 so a long event title wraps instead of pushing the brand mark off-screen */}
+        <View style={{ flex: 1, paddingRight: 12 }}>
           <Text variant="largeTitle">{event.title}</Text>
           <Text variant="footnote" dim>
             {photos.length} {t('gallery.photosLabel')}
