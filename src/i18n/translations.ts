@@ -66,6 +66,11 @@ export const translations = {
       storeTitle: 'Host your own moment',
       storeBody: 'Pick the occasion, get one code, and turn every guest into your photographer. Ready in 60 seconds.',
     },
+    questIntro: {
+      eyebrow: 'Your goal',
+      cta: 'Capture it',
+      hint: 'One photo. Make it count.',
+    },
     pricing: { from: 'from %{price}' },
     tiers: {
       intimate: { label: 'Intimate', blurb: 'Up to 25 guests' },
@@ -336,6 +341,11 @@ export const translations = {
       savedBody: 'Die 30-Tage-Uhr erreicht dieses Regal nie. Ein Herz oder ein Wisch nach rechts, und das Foto wohnt hier — exportiere alles mit einem Tipp.',
       storeTitle: 'Veranstalte deinen eigenen Moment',
       storeBody: 'Wähle den Anlass, erhalte einen Code, und jeder Gast wird zu deinem Fotografen. Startklar in 60 Sekunden.',
+    },
+    questIntro: {
+      eyebrow: 'Dein Ziel',
+      cta: 'Fang es ein',
+      hint: 'Ein Foto. Lass es zählen.',
     },
     pricing: { from: 'ab %{price}' },
     tiers: {
@@ -608,6 +618,11 @@ export const translations = {
       storeTitle: 'Organisez votre propre moment',
       storeBody: 'Choisissez l’occasion, recevez un code unique, et chaque invité devient votre photographe. Prêt en 60 secondes.',
     },
+    questIntro: {
+      eyebrow: 'Votre objectif',
+      cta: 'Capturez-le',
+      hint: 'Une photo. Faites-la compter.',
+    },
     pricing: { from: 'dès %{price}' },
     tiers: {
       intimate: { label: 'Intime', blurb: 'Jusqu’à 25 invités' },
@@ -878,6 +893,11 @@ export const translations = {
       savedBody: 'El reloj de 30 días nunca toca esta estantería. Un corazón o un swipe a la derecha, y la foto vive aquí — expórtalo todo con un toque.',
       storeTitle: 'Organiza tu propio momento',
       storeBody: 'Elige la ocasión, consigue un código y convierte a cada invitado en tu fotógrafo. Listo en 60 segundos.',
+    },
+    questIntro: {
+      eyebrow: 'Tu objetivo',
+      cta: 'Captúralo',
+      hint: 'Una foto. Que cuente.',
     },
     pricing: { from: 'desde %{price}' },
     tiers: {
@@ -1150,6 +1170,11 @@ export const translations = {
       storeTitle: 'Organizza il tuo momento',
       storeBody: 'Scegli l’occasione, ricevi un codice e ogni ospite diventa il tuo fotografo. Pronto in 60 secondi.',
     },
+    questIntro: {
+      eyebrow: 'Il tuo obiettivo',
+      cta: 'Catturalo',
+      hint: 'Una foto. Falla contare.',
+    },
     pricing: { from: 'da %{price}' },
     tiers: {
       intimate: { label: 'Intimo', blurb: 'Fino a 25 ospiti' },
@@ -1420,6 +1445,11 @@ export const translations = {
       savedBody: 'De 30-dagenklok raakt deze plank nooit. Een hartje of een swipe naar rechts, en de foto woont hier — exporteer alles met één tik.',
       storeTitle: 'Organiseer je eigen moment',
       storeBody: 'Kies de gelegenheid, krijg één code en maak van elke gast jouw fotograaf. Klaar in 60 seconden.',
+    },
+    questIntro: {
+      eyebrow: 'Jouw doel',
+      cta: 'Leg het vast',
+      hint: 'Eén foto. Laat hem tellen.',
     },
     pricing: { from: 'vanaf %{price}' },
     tiers: {
@@ -1692,6 +1722,11 @@ export const translations = {
       storeTitle: 'Organiza o teu próprio momento',
       storeBody: 'Escolhe a ocasião, recebe um código e transforma cada convidado no teu fotógrafo. Pronto em 60 segundos.',
     },
+    questIntro: {
+      eyebrow: 'O teu objetivo',
+      cta: 'Capta-o',
+      hint: 'Uma foto. Faz com que conte.',
+    },
     pricing: { from: 'desde %{price}' },
     tiers: {
       intimate: { label: 'Íntimo', blurb: 'Até 25 convidados' },
@@ -1962,6 +1997,11 @@ export const translations = {
       savedBody: 'Zegar 30 dni nigdy nie dosięga tej półki. Serce albo przesunięcie w prawo — i zdjęcie mieszka tutaj. Wyeksportuj wszystko jednym dotknięciem.',
       storeTitle: 'Zorganizuj własną chwilę',
       storeBody: 'Wybierz okazję, odbierz jeden kod i zamień każdego gościa w swojego fotografa. Gotowe w 60 sekund.',
+    },
+    questIntro: {
+      eyebrow: 'Twój cel',
+      cta: 'Uchwyć to',
+      hint: 'Jedno zdjęcie. Niech się liczy.',
     },
     pricing: { from: 'od %{price}' },
     tiers: {
@@ -2234,6 +2274,11 @@ export const translations = {
       storeTitle: 'Vær vært for dit eget øjeblik',
       storeBody: 'Vælg anledningen, få én kode, og gør hver gæst til din fotograf. Klar på 60 sekunder.',
     },
+    questIntro: {
+      eyebrow: 'Dit mål',
+      cta: 'Fang det',
+      hint: 'Ét billede. Få det til at tælle.',
+    },
     pricing: { from: 'fra %{price}' },
     tiers: {
       intimate: { label: 'Intim', blurb: 'Op til 25 gæster' },
@@ -2504,6 +2549,11 @@ export const translations = {
       savedBody: '30-dagarsklockan rör aldrig den här hyllan. Ett hjärta eller ett svep åt höger, så bor bilden här — exportera allt med ett tryck.',
       storeTitle: 'Stå värd för ditt eget ögonblick',
       storeBody: 'Välj tillfället, få en kod och gör varje gäst till din fotograf. Klart på 60 sekunder.',
+    },
+    questIntro: {
+      eyebrow: 'Ditt mål',
+      cta: 'Fånga det',
+      hint: 'En bild. Få den att räknas.',
     },
     pricing: { from: 'från %{price}' },
     tiers: {

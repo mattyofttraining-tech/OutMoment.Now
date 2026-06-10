@@ -1,15 +1,16 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { CameraView, useCameraPermissions, type CameraType } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
-import { Button, IconButton, PressableScale, Text } from '@/components/ui';
+import { BrandMark, Button, IconButton, PressableScale, Text } from '@/components/ui';
 import { Confetti } from '@/components/Confetti';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -44,6 +45,9 @@ export default function CaptureScreen() {
   }, [router]);
 
   const [facing, setFacing] = useState<CameraType>('back');
+  // Mission briefing: when arriving via a quest, frame the goal over the live
+  // camera before the user shoots. One tap anywhere dismisses into the camera.
+  const [briefing, setBriefing] = useState(true);
   const [busy, setBusy] = useState(false);
   const [justCaptured, setJustCaptured] = useState(false);
   // The frozen still shown over the live camera once a shot is taken, so users
@@ -88,6 +92,11 @@ export default function CaptureScreen() {
     },
     [activeEventId, capture, questId, quest, dismiss],
   );
+
+  const dismissBriefing = useCallback(() => {
+    haptics.light();
+    setBriefing(false);
+  }, []);
 
   const takePhoto = useCallback(async () => {
     if (busy || !cameraRef.current) return;
@@ -196,6 +205,49 @@ export default function CaptureScreen() {
         </View>
       </SafeAreaView>
 
+      {/* Mission briefing — shown over the live camera when a quest brought us
+          here, for curated and AI quests alike (both carry a localized title +
+          prompt). The camera warms up behind the blur, so dismissing lands the
+          user straight in a ready viewfinder. */}
+      {quest && briefing && !capturedUri ? (
+        <Animated.View
+          entering={FadeIn.duration(220)}
+          exiting={FadeOut.duration(200)}
+          style={styles.briefing}
+          accessibilityViewIsModal
+        >
+          <BlurView intensity={42} tint="dark" style={StyleSheet.absoluteFill} />
+          <Pressable
+            style={styles.briefingBody}
+            onPress={dismissBriefing}
+            accessibilityRole="button"
+            accessibilityLabel={t('questIntro.cta')}
+          >
+            <Animated.View entering={FadeInDown.delay(80).duration(380)} style={styles.briefingContent}>
+              <Text variant="overline" color={theme.colors.accent}>
+                {t('questIntro.eyebrow')}
+              </Text>
+              <Text style={{ fontSize: 56 }}>{quest.icon}</Text>
+              <Text variant="largeTitle" color="#fff" align="center">
+                {quest.title}
+              </Text>
+              <Text variant="title3" weight="400" color="rgba(255,255,255,0.85)" align="center">
+                {quest.prompt}
+              </Text>
+              <Text variant="footnote" color="rgba(255,255,255,0.55)">
+                {t('questIntro.hint')}
+              </Text>
+            </Animated.View>
+          </Pressable>
+          <SafeAreaView edges={['bottom']} style={styles.briefingFooter}>
+            <Button label={t('questIntro.cta')} onPress={dismissBriefing} />
+            <View style={{ alignItems: 'center', paddingTop: 14 }}>
+              <BrandMark variant="whisper" onPhoto />
+            </View>
+          </SafeAreaView>
+        </Animated.View>
+      ) : null}
+
       {/* Capture confirmation flash */}
       {justCaptured ? (
         <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(300)} style={styles.confirm}>
@@ -238,4 +290,8 @@ const styles = StyleSheet.create({
   shutterInner: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
   shutterTap: { width: 64, height: 64, borderRadius: 32 },
   confirm: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.4)' },
+  briefing: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.45)' },
+  briefingBody: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  briefingContent: { alignItems: 'center', gap: 14, paddingHorizontal: 32 },
+  briefingFooter: { position: 'absolute', left: 24, right: 24, bottom: 24 },
 });
