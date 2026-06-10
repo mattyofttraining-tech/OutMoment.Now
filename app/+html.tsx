@@ -25,21 +25,21 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="OurMoment" />
 
         <ScrollViewStyleReset />
-        {/* Installed-PWA polish: keep the canvas dark (overscroll/home-indicator
-            areas), and size the app with dvh — in iOS standalone mode `100%`
-            resolves against a layout viewport that stops above the home
-            indicator, leaving a dead strip at the bottom of every screen.
-            Installed app: dvh settles a frame or two after launch (the footer
-            visibly drops down) — there are no collapsing toolbars in standalone,
-            so lock to the large viewport, which is full-screen from frame one. */}
+        {/* App shell sizing: pin #root to the viewport with fixed positioning
+            instead of any viewport-height unit. 100%/dvh/lvh each resolve
+            differently across Safari-with-toolbars, iOS standalone and load
+            time — dvh in particular re-resolves while Safari's toolbar settles,
+            which made the app's bottom edge visibly jump on load and left a
+            dead strip the background photo bled into. A fixed, inset-0 element
+            is glued to the real viewport edges by the compositor: no gap, no
+            jump, in-browser and installed alike (incl. the home-indicator area,
+            thanks to viewport-fit=cover). */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
 body{background-color:#0B0B0F}
-@supports (height: 100dvh) { html, body, #root { height: 100dvh; } }
-@media (display-mode: standalone) {
-  @supports (height: 100lvh) { html, body, #root { height: 100lvh; } }
-}
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+#root { position: fixed; inset: 0; }
 #splash {
   position: fixed; inset: 0; z-index: 9999;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;

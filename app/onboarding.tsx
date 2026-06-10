@@ -78,7 +78,9 @@ export default function Onboarding() {
     });
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#0B0B0F' }}>
+    // overflow hidden: the Ken Burns layer scales past its bounds and must
+    // never paint outside the screen (it bled into Safari's toolbar gap).
+    <View style={{ flex: 1, backgroundColor: '#0B0B0F', overflow: 'hidden' }}>
       <GestureDetector gesture={swipe}>
         <View style={StyleSheet.absoluteFill}>
           {/* Crossfading photo layer with a slow Ken Burns drift. */}
