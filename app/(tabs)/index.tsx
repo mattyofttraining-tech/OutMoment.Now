@@ -79,10 +79,7 @@ export default function MomentScreen() {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 6 }}>
           <IconButton name="swap-horizontal" onPress={() => router.push('/events')} surface />
           <BrandMark variant="whisper" />
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <IconButton name="stats-chart" onPress={() => router.push('/host')} surface />
-            <IconButton name="person-circle-outline" onPress={() => router.push('/settings')} surface />
-          </View>
+          <IconButton name="person-circle-outline" onPress={() => router.push('/host')} surface />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 140 }}>
