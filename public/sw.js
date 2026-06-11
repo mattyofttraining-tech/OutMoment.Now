@@ -37,11 +37,17 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return; // never intercept Firebase/Stripe
 
   if (request.mode === 'navigate') {
+    // Standalone marketing/legal pages are not the app shell — caching them
+    // as SHELL would serve the wrong page when the app is opened offline.
+    const isStandalone =
+      url.pathname.startsWith('/website') || url.pathname.startsWith('/legal');
     event.respondWith(
       fetch(request)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((cache) => cache.put(SHELL, copy));
+          if (!isStandalone) {
+            const copy = res.clone();
+            caches.open(CACHE).then((cache) => cache.put(SHELL, copy));
+          }
           return res;
         })
         .catch(() => caches.match(SHELL)),

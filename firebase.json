@@ -9,6 +9,7 @@
   "hosting": {
     "public": "dist",
     "ignore": ["firebase.json", "**/.*"],
+    "redirects": [{ "source": "/welcome{,/**}", "destination": "/website/", "type": 301 }],
     "rewrites": [{ "source": "**", "destination": "/index.html" }]
   },
   "functions": [
